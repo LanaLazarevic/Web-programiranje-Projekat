@@ -1,0 +1,188 @@
+package com.example.raf.projekatrafturistickivodic.repositories.korisnik;
+
+
+
+import com.example.raf.projekatrafturistickivodic.entities.Korisnik;
+import com.example.raf.projekatrafturistickivodic.repositories.MySqlAbstractRepository;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MySqlUserRepository extends MySqlAbstractRepository implements UserRepository{
+
+    @Override
+    public Korisnik findKorisnik(String email) {
+        Korisnik korisnik = null;
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("SELECT * FROM korisnik where email = ?");
+            preparedStatement.setString(1, email);
+            System.out.println(preparedStatement.toString());
+            resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()) {
+                int id = resultSet.getInt("korisnik_id");
+                String ime = resultSet.getString("ime");
+                String prezime = resultSet.getString("prezime");
+                String tip = resultSet.getString("tip");
+                String lozinka = resultSet.getString("lozinka");
+                String status = resultSet.getString("status");
+                korisnik = new Korisnik(id,ime,prezime,lozinka,email,tip, status);
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return korisnik;
+    }
+
+    @Override
+    public Korisnik addKorisnik(Korisnik korisnik) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            String[] generatedColumns = {"korisnik_id"};
+
+            preparedStatement = connection.prepareStatement("INSERT INTO korisnik (email, ime, prezime, tip, lozinka, status) VALUES(?,?,?,?,?,?)", generatedColumns);
+            preparedStatement.setString(1, korisnik.getEmail());
+            preparedStatement.setString(2, korisnik.getIme());
+            preparedStatement.setString(3, korisnik.getTip());
+            preparedStatement.setString(4, korisnik.getLozinka());
+            preparedStatement.setString(5, korisnik.getStatus());
+            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.getGeneratedKeys();
+
+            if (resultSet.next()) {
+                korisnik.setKorisnik_id(resultSet.getInt(1));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return korisnik;
+    }
+
+    //dal ne treba da vraca nista ili treba da vrati tog korisnika.
+    @Override
+    public void changeStatus(Integer id) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement1 = null;
+        ResultSet resultSet = null;
+        String status = null;
+        try {
+            //dal cu imati prosledjen id
+            connection = this.newConnection();
+
+            preparedStatement1 = connection.prepareStatement("SELECT status FROM korisnik WHERE korisnik_id = ?");
+            preparedStatement1.setInt(1, id);
+            resultSet = preparedStatement1.executeQuery();
+            if(resultSet.next()) {
+                if(resultSet.getString("status").equalsIgnoreCase("aktivan"))
+                    status = "neaktivan";
+                else
+                    status = "aktivan";
+            }
+
+
+
+            preparedStatement = connection.prepareStatement("UPDATE korisnik SET status = ? WHERE korisnik_id = ?");
+            preparedStatement.setString(1, status);
+            preparedStatement.setInt(2, id);
+            preparedStatement.executeUpdate();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeStatement(preparedStatement1);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+    }
+
+    @Override
+    public Korisnik updateKorisnik(Korisnik korisnik) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            //dal radi upit i dal cu imtati prosledjen id ili moram prvo da ga nadjem pa da vrsim update
+
+            connection = this.newConnection();
+
+            preparedStatement = connection.prepareStatement("UPDATE korisnik SET email = ?, ime = ?, prezime = ?, tip = ?, lozinka = ?, status = ? WHERE korisnik_id = ?");
+            preparedStatement.setString(1, korisnik.getEmail()); ;
+            preparedStatement.setString(2, korisnik.getIme());
+            preparedStatement.setString(3, korisnik.getTip());
+            preparedStatement.setString(4, korisnik.getLozinka());
+            preparedStatement.setString(5, korisnik.getStatus());
+            preparedStatement.setInt(7, korisnik.getKorisnik_id());
+            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.getGeneratedKeys();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return korisnik;
+    }
+
+    @Override
+    public List<Korisnik> findAllKorisnik() {
+        List<Korisnik> korisnici = new ArrayList<>();
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("select * from korisnik");
+            while (resultSet.next()) {
+                korisnici.add(new Korisnik(resultSet.getInt("korisnik_id"), resultSet.getString("ime"), resultSet.getString("prezime"),
+                        resultSet.getString("lozinka"), resultSet.getString("email"),
+                        resultSet.getString("tip"), resultSet.getString("status")));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return korisnici;
+    }
+
+}
