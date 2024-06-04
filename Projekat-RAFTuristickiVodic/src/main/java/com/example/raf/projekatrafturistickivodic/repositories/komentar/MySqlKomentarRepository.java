@@ -4,7 +4,6 @@ import com.example.raf.projekatrafturistickivodic.entities.Komentar;
 import com.example.raf.projekatrafturistickivodic.repositories.MySqlAbstractRepository;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class MySqlKomentarRepository extends MySqlAbstractRepository implements 
 
             preparedStatement = connection.prepareStatement("SELECT * FROM komentar where clanak = ?");
             preparedStatement.setInt(1, id);
-            resultSet = preparedStatement.executeQuery();;
+            resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {
                 String ime = resultSet.getString("autor");
                 String kom = resultSet.getString("tekst");
