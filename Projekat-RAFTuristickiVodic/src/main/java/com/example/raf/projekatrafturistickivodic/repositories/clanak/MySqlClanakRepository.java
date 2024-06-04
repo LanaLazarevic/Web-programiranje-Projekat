@@ -22,7 +22,7 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             if(filter.equalsIgnoreCase("najnoviji"))
                 resultSet = statement.executeQuery("SELECT * FROM clanak ORDER BY vreme DESC limit 10");
             else if(filter.equalsIgnoreCase("najcitaniji"))
-                resultSet = statement.executeQuery("SELECT * FROM clanak WHERE datum >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY br_poseta DESC");
+                resultSet = statement.executeQuery("SELECT * FROM clanak WHERE vreme >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY br_poseta DESC");
             else
                 resultSet = statement.executeQuery("SELECT * FROM clanak ORDER BY vreme DESC");
 
@@ -61,7 +61,6 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         PreparedStatement preparedStatement = null;
         PreparedStatement deletemedju = null;
         PreparedStatement umetni = null;
-        ResultSet resultSet = null;
         try {
 
             connection = this.newConnection();
@@ -76,7 +75,7 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
 
             //brisanje medju tabele
 
-            deletemedju = connection.prepareStatement("DELETE FROM clanak_aktivnost WHERE clanak_id = ?");
+            deletemedju = connection.prepareStatement("DELETE FROM clanak_aktivnost WHERE clanak = ?");
             deletemedju.setInt(1, clanak.getClanak_id());
             deletemedju.executeUpdate();
 
@@ -94,7 +93,6 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             this.closeStatement(preparedStatement);
             this.closeStatement(deletemedju);
             this.closeStatement(umetni);
-            this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
@@ -169,8 +167,8 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             preparedStatement.setString(2, clanak.getTekst());
             preparedStatement.setString(3, clanak.getVreme());
             preparedStatement.setInt(4, 0);
-            preparedStatement.setInt(5, clanak.getDestinacija());
-            preparedStatement.setString(6, clanak.getAutor());
+            preparedStatement.setString(5, clanak.getAutor());
+            preparedStatement.setInt(6, clanak.getDestinacija());
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
 
@@ -184,6 +182,8 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
                 preparedStatement1.setInt(2, aktivnost);
                 preparedStatement1.executeUpdate();
             }
+
+            clanak.setBr_poseta(0);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -209,13 +209,16 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             statement = connection.prepareStatement("SELECT c.* FROM clanak c JOIN clanak_aktivnost ca ON c.clanak_id = ca.clanak WHERE ca.aktivnost = ? ORDER BY c.vreme DESC");
             statement.setInt(1,id);
             resultSet = statement.executeQuery();
+            List<Integer> aktivnosti = new ArrayList<>();
+            aktivnosti.add(id);
             while (resultSet.next()) {
                 clanci.add(new Clanak(resultSet.getString("autor"),
                         resultSet.getInt("clanak_id"),
                         resultSet.getString("naslov"),
                         resultSet.getDate("vreme").toString(), resultSet.getString("tekst"),
                         resultSet.getInt("br_poseta"),
-                        resultSet.getInt("destinacija")));
+                        resultSet.getInt("destinacija"),
+                        aktivnosti));
             }
 
         } catch (Exception e) {
@@ -227,6 +230,62 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         }
 
         return clanci;
+    }
+
+    @Override
+    public Clanak findClanakById(Integer id) {
+        Clanak clanak = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        PreparedStatement preparedStatement1 = null;
+        ResultSet resultSet2 = null;
+        try {
+
+
+            connection = this.newConnection();
+
+            List<Integer> aktivnosti = new ArrayList<>();
+            preparedStatement1 = connection.prepareStatement("select * from clanak_aktivnost WHERE clanak = ?");
+            preparedStatement1.setInt(1, id);
+            resultSet2 = preparedStatement1.executeQuery();
+            while (resultSet2.next()) {
+                aktivnosti.add(resultSet2.getInt("aktivnost"));
+            }
+            System.out.println(aktivnosti);
+            preparedStatement = connection.prepareStatement("select * from clanak WHERE clanak_id = ?");
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                String autor = resultSet.getString("autor");
+                String naslov = resultSet.getString("naslov");
+                String tekst = resultSet.getString("tekst");
+                int brPoseta = resultSet.getInt("br_poseta");
+                int destinacija = resultSet.getInt("destinacija");
+                String vreme = resultSet.getDate("vreme").toString();
+
+                System.out.println("Autor: " + autor);
+                System.out.println("Naslov: " + naslov);
+                System.out.println("Tekst: " + tekst);
+                System.out.println("Broj poseta: " + brPoseta);
+                System.out.println("Destinacija: " + destinacija);
+                System.out.println("Vreme: " + vreme);
+                clanak = new Clanak(autor, id, naslov, vreme, tekst, brPoseta, destinacija, aktivnosti);
+                System.out.println("Kreiran clanak: " + clanak);
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeConnection(connection);
+            this.closeStatement(preparedStatement1);
+            this.closeResultSet(resultSet);
+            this.closeResultSet(resultSet2);
+        }
+
+        return  clanak;
     }
 
 

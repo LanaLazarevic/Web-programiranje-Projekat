@@ -41,6 +41,7 @@ public class ClanakResource {
     public void incrementbrposetioca(@PathParam("id") Integer id){
         this.clanakService.incrementbrposetioca(id);
     }
+
     @POST
     @Produces({MediaType.APPLICATION_JSON})
     public Clanak addClanak(@Valid Clanak clanak){
@@ -52,5 +53,12 @@ public class ClanakResource {
     @Produces({MediaType.APPLICATION_JSON})
     public List<Clanak> findAllClanakByAktivnost(@PathParam("id") Integer id){
         return this.clanakService.findAllClanakByAktivnost(id);
+    }
+
+    @GET
+    @Path("/byid/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Clanak findClanakById(@PathParam("id") Integer id){
+        return this.clanakService.findClanakById(id);
     }
 }

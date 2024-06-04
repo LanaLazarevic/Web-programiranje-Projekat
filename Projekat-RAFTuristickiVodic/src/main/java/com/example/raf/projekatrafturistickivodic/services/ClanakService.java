@@ -34,4 +34,8 @@ public class ClanakService {
     public List<Clanak> findAllClanakByAktivnost(Integer id){
         return this.clanakRepository.findAllClanakByAktivnost(id);
     }
+
+    public Clanak findClanakById(Integer id){
+        return this.clanakRepository.findClanakById(id);
+    }
 }

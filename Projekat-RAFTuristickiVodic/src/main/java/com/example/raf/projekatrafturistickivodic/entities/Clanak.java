@@ -57,6 +57,14 @@ public class Clanak {
         this.br_poseta = br_poseta;
         this.destinacija = destinacija;
         this.aktivnosti = aktivnosti;
+        System.out.println("prosao");
+        System.out.println("Autor: " + autor);
+        System.out.println("Naslov: " + naslov);
+        System.out.println("Tekst: " + tekst);
+        System.out.println("Broj poseta: " + br_poseta);
+        System.out.println("Destinacija: " + destinacija);
+        System.out.println("Vreme: " + vreme);
+        System.out.println("Autor: " + aktivnosti);
     }
 
     public void setVreme(String date){

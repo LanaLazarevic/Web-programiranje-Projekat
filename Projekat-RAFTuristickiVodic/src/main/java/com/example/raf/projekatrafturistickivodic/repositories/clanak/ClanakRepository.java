@@ -11,4 +11,5 @@ public interface ClanakRepository {
     void incrementbrposetioca(Integer id);
     Clanak addClanak(Clanak clanak);
     List<Clanak> findAllClanakByAktivnost(Integer id);
+    Clanak findClanakById(Integer id);
 }
