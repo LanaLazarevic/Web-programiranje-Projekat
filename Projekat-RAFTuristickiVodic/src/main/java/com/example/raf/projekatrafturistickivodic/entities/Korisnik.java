@@ -20,7 +20,15 @@ public class Korisnik {
     public Korisnik() {
     }
 
-    public Korisnik(Integer korisnik_id,String ime, String prezime, String lozinka, String email, String tip, String status) {}
+    public Korisnik(Integer korisnik_id,String ime, String prezime, String lozinka, String email, String tip, String status) {
+        this.korisnik_id = korisnik_id;
+        this.ime = ime;
+        this.prezime = prezime;
+        this.lozinka = lozinka;
+        this.email = email;
+        this.tip = tip;
+        this.status = status;
+    }
 
     public String getIme() {
         return ime;

@@ -47,15 +47,16 @@ public class MySqlKomentarRepository extends MySqlAbstractRepository implements 
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
-
-            preparedStatement = connection.prepareStatement("Insert into komentar(autor, tekst, datum,clanak) VALUES(?,?,?,?)");
+            String[] generatedColumns = {"komentar_id"};
+            preparedStatement = connection.prepareStatement("Insert into komentar(autor, tekst, datum,clanak) VALUES(?,?,?,?)", generatedColumns);
             preparedStatement.setString(1, komentar.getAutor());
             preparedStatement.setString(2, komentar.getTekst());
             preparedStatement.setString(3,komentar.getDatum());
             preparedStatement.setInt(4, id);
-            resultSet = preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.getGeneratedKeys();
             while(resultSet.next()) {
-                komentar.setKomentar_id(resultSet.getInt("komentar_id"));
+                komentar.setKomentar_id(resultSet.getInt(1));
             }
         } catch (SQLException e) {
             e.printStackTrace();

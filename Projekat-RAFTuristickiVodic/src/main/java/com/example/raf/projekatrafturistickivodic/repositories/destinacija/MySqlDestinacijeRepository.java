@@ -44,7 +44,6 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
     public Destinacija updateDestinacija(Destinacija destinacija) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         try {
             //dal radi upit i dal cu imtati prosledjen id ili moram prvo da ga nadjem pa da vrsim update
 
@@ -55,14 +54,12 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
             preparedStatement.setString(2, destinacija.getOpis());
             preparedStatement.setInt(3, destinacija.getDestinacija_id());
             preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
 
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 
@@ -102,8 +99,29 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
 
     @Override
     public Destinacija addDestinacija(Destinacija destinacija) {
-        //TODO
-        return null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+            String[] generatedColumns = {"destinacija_id"};
+            preparedStatement = connection.prepareStatement("Insert into destinacija (ime, opis) VALUES(?,?)", generatedColumns);
+            preparedStatement.setString(1, destinacija.getIme());
+            preparedStatement.setString(2, destinacija.getOpis());
+            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.getGeneratedKeys();
+            while(resultSet.next()) {
+                destinacija.setDestinacija_id(resultSet.getInt(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return  destinacija;
     }
 
     @Override

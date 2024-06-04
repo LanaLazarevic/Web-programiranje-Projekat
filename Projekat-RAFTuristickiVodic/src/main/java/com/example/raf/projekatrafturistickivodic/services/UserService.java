@@ -23,6 +23,7 @@ public class UserService {
         String hashedPassword = DigestUtils.sha256Hex(password);
 
         Korisnik korisnik = userRepository.findKorisnik(email);
+
         if (korisnik == null || !korisnik.getLozinka().equals(hashedPassword)) {
             return "Taj korisnik ne postoji!";
         }

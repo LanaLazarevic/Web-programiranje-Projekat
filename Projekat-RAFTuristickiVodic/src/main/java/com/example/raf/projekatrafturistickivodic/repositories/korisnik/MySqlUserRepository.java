@@ -4,6 +4,7 @@ package com.example.raf.projekatrafturistickivodic.repositories.korisnik;
 
 import com.example.raf.projekatrafturistickivodic.entities.Korisnik;
 import com.example.raf.projekatrafturistickivodic.repositories.MySqlAbstractRepository;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
 
             preparedStatement = connection.prepareStatement("SELECT * FROM korisnik where email = ?");
             preparedStatement.setString(1, email);
-            System.out.println(preparedStatement.toString());
+            System.out.println(preparedStatement);
             resultSet = preparedStatement.executeQuery();
 
             if(resultSet.next()) {
@@ -34,6 +35,12 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
                 String lozinka = resultSet.getString("lozinka");
                 String status = resultSet.getString("status");
                 korisnik = new Korisnik(id,ime,prezime,lozinka,email,tip, status);
+                System.out.println("id: " + id);
+                System.out.println("ime: " + ime);
+                System.out.println("prezime: " + prezime);
+                System.out.println("tip: " + tip);
+                System.out.println("lozinka: " + lozinka);  // Proverite vrednost lozinke
+                System.out.println("status: " + status);
             }
 
             resultSet.close();
@@ -59,13 +66,14 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
             connection = this.newConnection();
 
             String[] generatedColumns = {"korisnik_id"};
-
+            String hashedPassword = DigestUtils.sha256Hex(korisnik.getLozinka());
             preparedStatement = connection.prepareStatement("INSERT INTO korisnik (email, ime, prezime, tip, lozinka, status) VALUES(?,?,?,?,?,?)", generatedColumns);
             preparedStatement.setString(1, korisnik.getEmail());
             preparedStatement.setString(2, korisnik.getIme());
-            preparedStatement.setString(3, korisnik.getTip());
-            preparedStatement.setString(4, korisnik.getLozinka());
-            preparedStatement.setString(5, korisnik.getStatus());
+            preparedStatement.setString(3, korisnik.getPrezime());
+            preparedStatement.setString(4, korisnik.getTip());
+            preparedStatement.setString(5, hashedPassword);
+            preparedStatement.setString(6, korisnik.getStatus());
             preparedStatement.executeUpdate();
             resultSet = preparedStatement.getGeneratedKeys();
 
@@ -129,28 +137,26 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
     public Korisnik updateKorisnik(Korisnik korisnik) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         try {
             //dal radi upit i dal cu imtati prosledjen id ili moram prvo da ga nadjem pa da vrsim update
 
             connection = this.newConnection();
-
+            String hashedPassword = DigestUtils.sha256Hex(korisnik.getLozinka());
             preparedStatement = connection.prepareStatement("UPDATE korisnik SET email = ?, ime = ?, prezime = ?, tip = ?, lozinka = ?, status = ? WHERE korisnik_id = ?");
             preparedStatement.setString(1, korisnik.getEmail()); ;
             preparedStatement.setString(2, korisnik.getIme());
-            preparedStatement.setString(3, korisnik.getTip());
-            preparedStatement.setString(4, korisnik.getLozinka());
-            preparedStatement.setString(5, korisnik.getStatus());
+            preparedStatement.setString(3, korisnik.getPrezime());
+            preparedStatement.setString(4, korisnik.getTip());
+            preparedStatement.setString(5, hashedPassword);
+            preparedStatement.setString(6, korisnik.getStatus());
             preparedStatement.setInt(7, korisnik.getKorisnik_id());
             preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
 
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 

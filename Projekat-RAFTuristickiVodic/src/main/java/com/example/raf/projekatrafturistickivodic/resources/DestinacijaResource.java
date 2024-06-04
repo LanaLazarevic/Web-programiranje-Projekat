@@ -1,7 +1,6 @@
 package com.example.raf.projekatrafturistickivodic.resources;
 
 import com.example.raf.projekatrafturistickivodic.entities.Destinacija;
-import com.example.raf.projekatrafturistickivodic.entities.Komentar;
 import com.example.raf.projekatrafturistickivodic.services.DestinacijaService;
 
 import javax.inject.Inject;

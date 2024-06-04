@@ -175,7 +175,7 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             resultSet = preparedStatement.getGeneratedKeys();
 
             if (resultSet.next()) {
-                clanak.setClanak_id(resultSet.getInt("clanak_id"));
+                clanak.setClanak_id(resultSet.getInt(1));
             }
 
             for (Integer aktivnost : clanak.getAktivnosti()){
