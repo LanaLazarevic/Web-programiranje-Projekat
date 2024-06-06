@@ -10,8 +10,9 @@ public class DestinacijaService {
     @Inject
     DestinacijeRepository destinacijeRepository;
 
-    public List<Destinacija> allDestinacije() {
-        return this.destinacijeRepository.findAllDestinacije();
+    public List<Destinacija> allDestinacije(int limit, int page) {
+        int offset = (page - 1) * limit;
+        return this.destinacijeRepository.findAllDestinacije(limit,offset);
     }
 
     public Destinacija updateDestinacija(Destinacija destinacija) {

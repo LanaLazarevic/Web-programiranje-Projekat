@@ -41,6 +41,7 @@ public class UserService {
                 .withExpiresAt(expiresAt)
                 .withSubject(email)
                 .withClaim("uloga", korisnik.getTip())
+                .withClaim("ime", korisnik.getIme())
                 .sign(algorithm);
     }
 

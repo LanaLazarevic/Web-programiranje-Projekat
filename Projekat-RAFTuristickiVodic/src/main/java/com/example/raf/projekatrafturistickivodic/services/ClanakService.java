@@ -11,8 +11,9 @@ public class ClanakService {
     @Inject
     ClanakRepository clanakRepository;
 
-    public List<Clanak> findAllClanak(String filter){
-        return this.clanakRepository.findAllClanak(filter);
+    public List<Clanak> findAllClanak(String filter, int limit, int current){
+        int offset = (current - 1) * limit;
+        return this.clanakRepository.findAllClanak(filter, limit, offset);
     }
 
     public Clanak updateClanak(Clanak clanak){

@@ -17,9 +17,10 @@ public class DestinacijaResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getDestinacija()
+    public Response getDestinacija(@QueryParam("page")int page,
+                                   @QueryParam("limit") int limit)
     {
-        return Response.ok(this.destinacijaService.allDestinacije()).build();
+        return Response.ok(this.destinacijaService.allDestinacije(limit,page)).build();
     }
 
     @POST

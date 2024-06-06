@@ -14,7 +14,7 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
 
 
     @Override
-    public List<Destinacija> findAllDestinacije() {
+    public List<Destinacija> findAllDestinacije(int limit, int offset) {
         List<Destinacija> destinacijas = new ArrayList<>();
         Connection connection = null;
         Statement statement = null;
@@ -23,7 +23,7 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
             connection = this.newConnection();
 
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("select * from destinacija");
+            resultSet = statement.executeQuery("select * from destinacija limit " + limit + " offset " + offset);
             while (resultSet.next()) {
                 destinacijas.add(new Destinacija(resultSet.getInt("destinacija_id"),
                         resultSet.getString("ime"), resultSet.getString("opis")));

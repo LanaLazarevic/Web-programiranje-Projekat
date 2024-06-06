@@ -19,8 +19,9 @@ public class ClanakResource {
     @GET
     @Path("/{filter}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response findAllClanak(@PathParam("filter") String filter){
-        return Response.ok(this.clanakService.findAllClanak(filter)).build();
+    public Response findAllClanak(@PathParam("filter") String filter, @QueryParam("page") int page,
+                                  @QueryParam("limit") int limit){
+        return Response.ok(this.clanakService.findAllClanak(filter, limit, page)).build();
     }
 
     @PUT

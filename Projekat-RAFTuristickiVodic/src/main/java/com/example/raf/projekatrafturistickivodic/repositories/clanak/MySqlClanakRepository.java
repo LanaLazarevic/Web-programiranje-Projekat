@@ -9,22 +9,39 @@ import java.util.List;
 
 public class MySqlClanakRepository extends MySqlAbstractRepository implements ClanakRepository {
     @Override
-    public List<Clanak> findAllClanak(String filter) {
+    public List<Clanak> findAllClanak(String filter, int limit, int offset) {
         List<Clanak> clanci = new ArrayList<>();
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         Statement preparedStatement = null;
         ResultSet rs = null;
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
-            statement = connection.createStatement();
-            if(filter.equalsIgnoreCase("najnoviji"))
-                resultSet = statement.executeQuery("SELECT * FROM clanak ORDER BY vreme DESC limit 10");
-            else if(filter.equalsIgnoreCase("najcitaniji"))
-                resultSet = statement.executeQuery("SELECT * FROM clanak WHERE vreme >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY br_poseta DESC");
-            else
-                resultSet = statement.executeQuery("SELECT * FROM clanak ORDER BY vreme DESC");
+            if(filter.equalsIgnoreCase("najnoviji")){
+                statement = connection.prepareStatement("SELECT * FROM clanak ORDER BY vreme DESC limit 10");
+                resultSet = statement.executeQuery();
+
+            }
+               else if(filter.equalsIgnoreCase("najcitaniji")) {
+                statement = connection.prepareStatement("SELECT * FROM clanak WHERE vreme >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY br_poseta DESC LIMIT ? OFFSET ?");
+                statement.setInt(1, limit);
+                statement.setInt(2, offset);
+                resultSet = statement.executeQuery();
+            }
+            else if (isNumber(filter)) {
+                Integer destinacija = Integer.parseInt(filter);
+                statement = connection.prepareStatement("SELECT * FROM clanak where destinacija = ? ORDER BY vreme DESC Limit ? OFFSET ?");
+                statement.setInt(1, destinacija);
+                statement.setInt(2, limit);
+                statement.setInt(3, offset);
+                resultSet = statement.executeQuery();
+            } else {
+                statement = connection.prepareStatement("SELECT * FROM clanak ORDER BY vreme DESC Limit ? OFFSET ?");
+                statement.setInt(1, limit);
+                statement.setInt(2, offset);
+                resultSet = statement.executeQuery();
+            }
 
             while (resultSet.next()) {
                 preparedStatement = connection.createStatement();
@@ -288,5 +305,13 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         return  clanak;
     }
 
+    public static boolean isNumber(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
 }
