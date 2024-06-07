@@ -14,8 +14,11 @@
             <li class="nav-item">
               <router-link :to="{name: 'AllClanak'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'AllClanak'}">Clanci</router-link>
             </li>
+            <li class="nav-item" v-if="uloga === 'admin'">
+              <router-link :to="{name: 'AllKorisnici'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'AllKorisnici'}">Korisnici</router-link>
+            </li>
           </ul>
-          <h2>{{ ime }}</h2>
+          <h2 class="m-2">{{ ime }}</h2>
           <form v-if="canLogout" class="d-flex" @submit.prevent="logout">
             <button class="btn btn-outline-secondary" type="submit">Logout</button>
           </form>
@@ -27,12 +30,13 @@
 
 <script>
 import HomeView from "@/views/HomeView.vue";
+import {EventBus} from "@/plugins/event-bus";
 
 export default {
   name: "NavigationBar",
   // eslint-disable-next-line vue/no-unused-components
   components: {HomeView},
-  props: ['ime'], // Dodajemo ime kao prop
+  props: ['ime', 'uloga'],
 
   computed: {
     canLogout() {
@@ -45,6 +49,7 @@ export default {
       localStorage.removeItem('ime');
       localStorage.removeItem('uloga');
       this.$router.push({name: 'Login'});
+      EventBus.$emit('login-success', 'Guest');
     }
   }
 }

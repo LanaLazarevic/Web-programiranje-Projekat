@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import {EventBus} from "@/plugins/event-bus";
+
 export default {
   name: "LoginPage",
   data() {
@@ -31,6 +33,7 @@ export default {
       }).then(response => {
         localStorage.setItem('jwt', response.data.jwt)
         this.$router.push({name: 'AllDestinacije'});
+        EventBus.$emit('login-success', localStorage.getItem("ime"));
       })
     }
   },

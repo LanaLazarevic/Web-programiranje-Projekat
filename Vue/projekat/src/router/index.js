@@ -31,6 +31,15 @@ const routes = [
     },
     component: () => import(/* webpackChunkName: "about" */ '../views/AllClanci.vue')
   }
+  ,
+  {
+    path: '/korisnici',
+    name: 'AllKorisnici',
+    meta: {
+      authRequired: true,
+    },
+    component: () => import(/* webpackChunkName: "about" */ '../views/AllKorisnici.vue')
+  }
 ]
 
 const router = new VueRouter({

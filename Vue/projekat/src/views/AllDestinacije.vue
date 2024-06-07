@@ -33,7 +33,7 @@ export default {
       destinacije: [],
       currentPage:1,
       limit: 5,
-      totalPages:2,
+      totalPages: 0,
     }
   },
   created() {
@@ -50,7 +50,8 @@ export default {
         });
         console.log('API Response:', response);
         console.log('API Response:', response.data);
-        this.destinacije = response.data;
+        this.destinacije = response.data.destinacijee;
+        this.totalPages = response.data.stranice;
       } catch (error) {
         console.error('Došlo je do greške pri učitavanju destinacija:', error);
       }

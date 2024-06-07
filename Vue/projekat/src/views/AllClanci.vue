@@ -47,7 +47,7 @@ export default {
       clanci: [],
       currentPage:1,
       limit: 5,
-      totalPages:2,
+      totalPages:0,
     }
   },
   created() {
@@ -64,7 +64,8 @@ export default {
         });
         console.log('API Response:', response);
         console.log('API Response:', response.data);
-        this.clanci = response.data;
+        this.clanci = response.data.clancii;
+        this.totalPages = response.data.stranice;
       } catch (error) {
         console.error('Došlo je do greške pri učitavanju destinacija:', error);
       }
