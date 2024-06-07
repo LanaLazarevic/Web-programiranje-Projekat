@@ -26,4 +26,8 @@ public class DestinacijaService {
     public Destinacija addDestinacija(Destinacija destinacija) {
         return this.destinacijeRepository.addDestinacija(destinacija);
     }
+
+    public int countDestinacija() {
+        return this.destinacijeRepository.countdestinacije();
+    }
 }

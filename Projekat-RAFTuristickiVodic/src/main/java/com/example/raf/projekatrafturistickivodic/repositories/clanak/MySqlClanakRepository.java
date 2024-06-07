@@ -215,7 +215,7 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
     }
 
     @Override
-    public List<Clanak> findAllClanakByAktivnost(Integer id) {
+    public List<Clanak> findAllClanakByAktivnost(Integer id, int limit, int offset) {
         List<Clanak> clanci = new ArrayList<>();
         Connection connection = null;
         PreparedStatement statement = null;
@@ -223,8 +223,10 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         try {
             connection = this.newConnection();
 
-            statement = connection.prepareStatement("SELECT c.* FROM clanak c JOIN clanak_aktivnost ca ON c.clanak_id = ca.clanak WHERE ca.aktivnost = ? ORDER BY c.vreme DESC");
+            statement = connection.prepareStatement("SELECT c.* FROM clanak c JOIN clanak_aktivnost ca ON c.clanak_id = ca.clanak WHERE ca.aktivnost = ? ORDER BY c.vreme DESC limit ? OFFSET ?");
             statement.setInt(1,id);
+            statement.setInt(2,limit);
+            statement.setInt(3,offset);
             resultSet = statement.executeQuery();
             List<Integer> aktivnosti = new ArrayList<>();
             aktivnosti.add(id);
@@ -303,6 +305,76 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         }
 
         return  clanak;
+    }
+
+    @Override
+    public int countClanakByFilter(String filter) {
+        int br=0;
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+            if(filter.equalsIgnoreCase("najnoviji")){
+                return 10;
+
+            }
+            else if(filter.equalsIgnoreCase("najcitaniji")) {
+                statement = connection.prepareStatement("SELECT count(*) FROM clanak WHERE vreme >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY br_poseta DESC");
+                resultSet = statement.executeQuery();
+            }
+            else if (isNumber(filter)) {
+                Integer destinacija = Integer.parseInt(filter);
+                statement = connection.prepareStatement("SELECT count(*) FROM clanak where destinacija = ?");
+                statement.setInt(1, destinacija);
+                resultSet = statement.executeQuery();
+            } else {
+                statement = connection.prepareStatement("SELECT count(*) FROM clanak");
+                resultSet = statement.executeQuery();
+            }
+
+            if (resultSet.next()) {
+                br = resultSet.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return br;
+    }
+
+    @Override
+    public int countClanakByAktivnsot(Integer id) {
+        int br=0;
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            statement = connection.prepareStatement("SELECT count(*) FROM clanak_aktivnost where aktivnost = ?");
+            statement.setInt(1, id);
+            resultSet = statement.executeQuery();
+
+
+            if (resultSet.next()) {
+                br = resultSet.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return br;
     }
 
     public static boolean isNumber(String str) {

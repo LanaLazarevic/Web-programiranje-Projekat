@@ -32,11 +32,18 @@ public class ClanakService {
         return this.clanakRepository.addClanak(clanak);
     }
 
-    public List<Clanak> findAllClanakByAktivnost(Integer id){
-        return this.clanakRepository.findAllClanakByAktivnost(id);
+    public List<Clanak> findAllClanakByAktivnost(Integer id, int limit, int current){
+        int offset = (current - 1) * limit;
+        return this.clanakRepository.findAllClanakByAktivnost(id, limit, offset);
     }
 
     public Clanak findClanakById(Integer id){
         return this.clanakRepository.findClanakById(id);
+    }
+    public int countClanakByFilter(String filter) {
+        return this.clanakRepository.countClanakByFilter(filter);
+    }
+    public int countClanakByAktivnost(Integer id) {
+        return this.clanakRepository.countClanakByAktivnsot(id);
     }
 }

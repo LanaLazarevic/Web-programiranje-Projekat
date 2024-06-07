@@ -8,7 +8,9 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Path("/clanak")
 public class ClanakResource {
@@ -21,7 +23,11 @@ public class ClanakResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response findAllClanak(@PathParam("filter") String filter, @QueryParam("page") int page,
                                   @QueryParam("limit") int limit){
-        return Response.ok(this.clanakService.findAllClanak(filter, limit, page)).build();
+        Map<String, Object> response = new HashMap<>();
+        int br = this.clanakService.countClanakByFilter(filter);
+        response.put("clancii", this.clanakService.findAllClanak(filter,limit,page));
+        response.put("stranice", Math.ceil( (double) br / limit));
+        return Response.ok(response).build();
     }
 
     @PUT
@@ -52,8 +58,14 @@ public class ClanakResource {
     @GET
     @Path("/aktivnost/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public List<Clanak> findAllClanakByAktivnost(@PathParam("id") Integer id){
-        return this.clanakService.findAllClanakByAktivnost(id);
+    public Response findAllClanakByAktivnost(@PathParam("id") Integer id,
+                                                 @QueryParam("page") int page,
+                                                 @QueryParam("limit") int limit){
+        Map<String, Object> response = new HashMap<>();
+        int br = this.clanakService.countClanakByAktivnost(id);
+        response.put("clancii", this.clanakService.findAllClanakByAktivnost(id,limit,page));
+        response.put("stranice", Math.ceil( (double) br / limit));
+        return Response.ok(response).build();
     }
 
     @GET

@@ -11,4 +11,5 @@ public interface DestinacijeRepository {
     String deleteDestinacija(Integer id);
     Destinacija addDestinacija(Destinacija destinacija);
     Integer findDestinacijaIdByName(String destinacijaName);
+    int countdestinacije();
 }

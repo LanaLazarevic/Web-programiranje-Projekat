@@ -150,4 +150,30 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
 
         return indeks;
     }
+
+    @Override
+    public int countdestinacije() {
+        int br=0;
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("select count(*) from destinacija");
+            while (resultSet.next()) {
+                br = resultSet.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return br;
+    }
 }

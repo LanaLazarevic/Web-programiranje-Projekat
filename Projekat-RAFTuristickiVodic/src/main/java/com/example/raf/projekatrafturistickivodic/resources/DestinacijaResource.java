@@ -8,6 +8,8 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 @Path("/dest")
 public class DestinacijaResource {
@@ -20,7 +22,11 @@ public class DestinacijaResource {
     public Response getDestinacija(@QueryParam("page")int page,
                                    @QueryParam("limit") int limit)
     {
-        return Response.ok(this.destinacijaService.allDestinacije(limit,page)).build();
+        Map<String, Object> response = new HashMap<>();
+        int br = this.destinacijaService.countDestinacija();
+        response.put("destinacijee", this.destinacijaService.allDestinacije(limit,page));
+        response.put("stranice", Math.ceil( (double) br / limit));
+        return Response.ok(response).build();
     }
 
     @POST
