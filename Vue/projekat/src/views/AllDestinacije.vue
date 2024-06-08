@@ -5,7 +5,8 @@
       <tr>
         <th scope="col">Destinacija</th>
         <th scope="col">Opis</th>
-        <th scope="col">Akcija</th>
+        <th scope="col">Obrisi</th>
+        <th scope="col">Izmeni</th>
       </tr>
       </thead>
       <tbody>
@@ -13,6 +14,7 @@
         <td>{{ destinacija.ime  }}</td>
         <td>{{ destinacija.opis }}</td>
         <td><button @click="deleteDestinacija(destinacija.destinacija_id)">Obriši</button></td>
+        <td><button >Izmeni</button></td>
       </tr>
       </tbody>
     </table>
@@ -20,6 +22,10 @@
       <button @click="previousPage" :disabled="currentPage === 1">Nazad</button>
       <span>Stranica {{ currentPage }} od {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Napred</button>
+    </div>
+
+    <div class="justify-content-center mt-2">
+      <router-link :to="{name: 'NovaDestinacija'}" class="btn btn-primary">Dodaj novu destinaciju</router-link>
     </div>
   </div>
 </template>

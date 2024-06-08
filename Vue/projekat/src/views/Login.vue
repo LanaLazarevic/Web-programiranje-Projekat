@@ -3,7 +3,7 @@
     <form @submit.prevent="login">
       <div class="form-group">
         <label for="email">Email</label>
-        <input v-model="email" type="text" class="form-control" id="email" placeholder="Unesite Vas email">
+        <input v-model="email" type="email" class="form-control" id="email" placeholder="Unesite Vas email">
       </div>
       <div class="form-group">
         <label for="exampleInputPassword1">Password</label>
@@ -32,7 +32,10 @@ export default {
         password: this.password,
       }).then(response => {
         localStorage.setItem('jwt', response.data.jwt)
-        this.$router.push({name: 'AllDestinacije'});
+        if (this.$route.name !== 'PocetnaStrana') {
+          this.$router.push({name: 'PocetnaStrana'});
+        }
+
         EventBus.$emit('login-success', localStorage.getItem("ime"));
       })
     }

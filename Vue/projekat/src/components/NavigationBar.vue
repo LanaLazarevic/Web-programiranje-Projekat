@@ -9,6 +9,12 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
+              <router-link :to="{name: 'PocetnaStrana'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'PocetnaStrana'}">Pocetna</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link :to="{name: 'NajCitanije'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'NajCitanije'}">Najcitaniji clanci</router-link>
+            </li>
+            <li class="nav-item">
               <router-link :to="{name: 'AllDestinacije'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'AllDestinacije'}">Destinacije</router-link>
             </li>
             <li class="nav-item">

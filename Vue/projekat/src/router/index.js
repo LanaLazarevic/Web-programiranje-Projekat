@@ -16,6 +16,22 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
   },
   {
+    path: '/pocetna',
+    name: 'PocetnaStrana',
+    meta: {
+      authRequired: true,
+    },
+    component: () => import(/* webpackChunkName: "about" */ '../views/PocetnaStrana.vue')
+  },
+  {
+    path: '/najcitaniji',
+    name: 'NajCitanije',
+    meta: {
+      authRequired: true,
+    },
+    component: () => import(/* webpackChunkName: "about" */ '../views/NajCitanije.vue')
+  },
+  {
     path: '/destinacije',
     name: 'AllDestinacije',
     meta: {
@@ -39,6 +55,22 @@ const routes = [
       authRequired: true,
     },
     component: () => import(/* webpackChunkName: "about" */ '../views/AllKorisnici.vue')
+  },
+  {
+    path: '/novadestinacija',
+    name: 'NovaDestinacija',
+    meta: {
+      authRequired: true,
+    },
+    component: () => import(/* webpackChunkName: "about" */ '../views/NovaDestinacija.vue')
+  },
+  {
+    path: '/novikorisnik',
+    name: 'NoviKorisnik',
+    meta: {
+      authRequired: true,
+    },
+    component: () => import(/* webpackChunkName: "about" */ '../views/NoviKorisnik.vue')
   }
 ]
 

@@ -17,7 +17,7 @@
         <td>{{ clanak.tekst | shortText }}</td>
         <td>{{ clanak.autor }}</td>
         <td>{{ clanak.vreme }}</td>
-        <td><button @click="updateclanak(clanak.clanak_id)">Izmeni</button></td>
+        <td><button @click="updateclanak()">Izmeni</button></td>
         <td><button @click="deleteclanak(clanak.clanak_id)">Obriši</button></td>
       </tr>
       </tbody>
@@ -70,21 +70,17 @@ export default {
         console.error('Došlo je do greške pri učitavanju destinacija:', error);
       }
     },
-    deleteclanak(destinacijaId) {
+    async deleteclanak(destinacijaId) {
       try {
-        this.$axios.delete(`api/clanak/${destinacijaId}`);
+        // eslint-disable-next-line no-unused-vars
+        const response = await this.$axios.delete(`api/clanak/${destinacijaId}`);
         this.loadDestinacije(this.currentPage);
       } catch (error) {
         console.error('Došlo je do greške pri brisanju destinacije:', error);
       }
     },
-    updateclanak(destinacijaId) {
-      try {
-        this.$axios.put(`api/clanak/${destinacijaId}`);
-        this.loadDestinacije(this.currentPage);
-      } catch (error) {
-        console.error('Došlo je do greške pri brisanju destinacije:', error);
-      }
+    updateclanak() {
+
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {
