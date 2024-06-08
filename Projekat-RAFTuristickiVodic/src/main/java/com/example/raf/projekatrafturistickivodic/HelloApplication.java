@@ -1,5 +1,6 @@
 package com.example.raf.projekatrafturistickivodic;
 
+
 import com.example.raf.projekatrafturistickivodic.repositories.aktivnost.AktivnostRepository;
 import com.example.raf.projekatrafturistickivodic.repositories.aktivnost.MySqlAktivnosrtRepository;
 import com.example.raf.projekatrafturistickivodic.repositories.clanak.ClanakRepository;
@@ -17,7 +18,6 @@ import org.glassfish.jersey.server.ServerProperties;
 
 import javax.inject.Singleton;
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
 
 @ApplicationPath("/api")
 public class HelloApplication extends ResourceConfig {
@@ -41,7 +41,6 @@ public class HelloApplication extends ResourceConfig {
             }
         };
         register(binder);
-
         packages("com.example.raf.projekatrafturistickivodic");
     }
 }

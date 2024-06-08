@@ -10,5 +10,6 @@ public interface UserRepository {
      Korisnik addKorisnik(Korisnik korisnik);
      void changeStatus(Integer id);
      Korisnik updateKorisnik(Korisnik korisnik);
-     List<Korisnik> findAllKorisnik();
+     List<Korisnik> findAllKorisnik(int limit, int offset);
+     int countKorisnika();
 }

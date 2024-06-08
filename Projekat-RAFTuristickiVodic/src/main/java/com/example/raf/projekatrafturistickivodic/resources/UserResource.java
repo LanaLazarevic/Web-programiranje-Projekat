@@ -48,9 +48,13 @@ public class UserResource {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getKorisnik()
-    {
-        return Response.ok(this.userService.findAllKorisnik()).build();
+    public Response getKorisnik(@QueryParam("page")int page,
+                                @QueryParam("limit") int limit)
+    {   Map<String, Object> response = new HashMap<>();
+        int br = this.userService.countKorisnik();
+        response.put("korisnicii", this.userService.findAllKorisnik(limit,page));
+        response.put("stranice", Math.ceil( (double) br / limit));
+        return Response.ok(response).build();
     }
 
     @POST

@@ -101,9 +101,8 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
         ResultSet resultSet = null;
         String status = null;
         try {
-            //dal cu imati prosledjen id
             connection = this.newConnection();
-
+            connection.setAutoCommit(false);
             preparedStatement1 = connection.prepareStatement("SELECT status FROM korisnik WHERE korisnik_id = ?");
             preparedStatement1.setInt(1, id);
             resultSet = preparedStatement1.executeQuery();
@@ -121,8 +120,16 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
             preparedStatement.setInt(2, id);
             preparedStatement.executeUpdate();
 
+            connection.commit();
 
         } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
@@ -138,7 +145,6 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            //dal radi upit i dal cu imtati prosledjen id ili moram prvo da ga nadjem pa da vrsim update
 
             connection = this.newConnection();
             String hashedPassword = DigestUtils.sha256Hex(korisnik.getLozinka());
@@ -164,16 +170,18 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
     }
 
     @Override
-    public List<Korisnik> findAllKorisnik() {
+    public List<Korisnik> findAllKorisnik(int limit, int offset) {
         List<Korisnik> korisnici = new ArrayList<>();
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
 
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("select * from korisnik");
+            statement = connection.prepareStatement("select * from korisnik limit ? offset ?");
+            statement.setInt(1,limit);
+            statement.setInt(2,offset);
+            resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 korisnici.add(new Korisnik(resultSet.getInt("korisnik_id"), resultSet.getString("ime"), resultSet.getString("prezime"),
                         resultSet.getString("lozinka"), resultSet.getString("email"),
@@ -189,6 +197,32 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
         }
 
         return korisnici;
+    }
+
+    @Override
+    public int countKorisnika() {
+        int br=0;
+        Connection connection = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("select count(*) from korisnik");
+            if (resultSet.next()) {
+                br = resultSet.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return br;
     }
 
 }

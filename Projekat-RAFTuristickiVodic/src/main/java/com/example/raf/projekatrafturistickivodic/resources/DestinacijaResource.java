@@ -46,8 +46,10 @@ public class DestinacijaResource {
     @DELETE
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public String deleteDestinacija(@PathParam("id") Integer id)
+    public Response deleteDestinacija(@PathParam("id") Integer id)
     {
-        return this.destinacijaService.deleteDestinacija(id);
+        Map<String, Object> response = new HashMap<>();
+        response.put("poruka", this.destinacijaService.deleteDestinacija(id));
+        return Response.ok(response).build();
     }
 }

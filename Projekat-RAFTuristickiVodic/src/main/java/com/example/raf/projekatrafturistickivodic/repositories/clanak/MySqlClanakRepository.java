@@ -18,12 +18,12 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
-            if(filter.equalsIgnoreCase("najnoviji")){
+            if(filter.equalsIgnoreCase("naj")){
                 statement = connection.prepareStatement("SELECT * FROM clanak ORDER BY vreme DESC limit 10");
                 resultSet = statement.executeQuery();
 
             }
-               else if(filter.equalsIgnoreCase("najcitaniji")) {
+               else if(filter.equalsIgnoreCase("najc")) {
                 statement = connection.prepareStatement("SELECT * FROM clanak WHERE vreme >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY br_poseta DESC LIMIT ? OFFSET ?");
                 statement.setInt(1, limit);
                 statement.setInt(2, offset);
@@ -76,12 +76,13 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
     public Clanak updateClanak(Clanak clanak) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        PreparedStatement deletemedju = null;
         PreparedStatement umetni = null;
+
         try {
-
             connection = this.newConnection();
+            connection.setAutoCommit(false); // Početak transakcije
 
+            // Ažuriranje članka
             preparedStatement = connection.prepareStatement("UPDATE clanak SET naslov = ?, tekst = ?, destinacija = ? WHERE clanak_id = ?");
             preparedStatement.setString(1, clanak.getNaslov());
             preparedStatement.setString(2, clanak.getTekst());
@@ -89,31 +90,41 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             preparedStatement.setInt(4, clanak.getClanak_id());
             preparedStatement.executeUpdate();
 
-
             //brisanje medju tabele
 
-            deletemedju = connection.prepareStatement("DELETE FROM clanak_aktivnost WHERE clanak = ?");
-            deletemedju.setInt(1, clanak.getClanak_id());
-            deletemedju.executeUpdate();
+//            deletemedju = connection.prepareStatement("DELETE FROM clanak_aktivnost WHERE clanak = ?");
+//            deletemedju.setInt(1, clanak.getClanak_id());
+//            deletemedju.executeUpdate();
 
-            // dodavanje novih i dal rafi ovako dal moze isti statement da se menja
-            for (Integer aktivnost : clanak.getAktivnosti()){
-                umetni = connection.prepareStatement("INSERT INTO clanak_aktivnost(clanak,aktivnost) VALUES(?,?)");
+
+            // dodavanje novih aktivnosti
+            umetni = connection.prepareStatement("INSERT INTO clanak_aktivnost(clanak, aktivnost) VALUES(?,?)");
+            for (Integer aktivnost : clanak.getAktivnosti()) {
                 umetni.setInt(1, clanak.getClanak_id());
                 umetni.setInt(2, aktivnost);
-                umetni.executeUpdate();
+                umetni.addBatch();
             }
+            umetni.executeBatch();
+
+            connection.commit();
 
         } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
-            this.closeStatement(deletemedju);
             this.closeStatement(umetni);
             this.closeConnection(connection);
         }
 
         return clanak;
+
     }
 
     @Override
@@ -177,6 +188,7 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
+            connection.setAutoCommit(false);
 
             String[] generatedColumns = {"clanak_id"};
             preparedStatement = connection.prepareStatement("INSERT INTO clanak (naslov, tekst, vreme, br_poseta, autor, destinacija) VALUES(?,?,?,?,?,?)", generatedColumns);
@@ -193,16 +205,25 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
                 clanak.setClanak_id(resultSet.getInt(1));
             }
 
-            for (Integer aktivnost : clanak.getAktivnosti()){
-                preparedStatement1 = connection.prepareStatement("INSERT INTO clanak_aktivnost(clanak,aktivnost) VALUES(?,?)");
+            preparedStatement1 = connection.prepareStatement("INSERT INTO clanak_aktivnost(clanak, aktivnost) VALUES(?,?)");
+            for (Integer aktivnost : clanak.getAktivnosti()) {
                 preparedStatement1.setInt(1, clanak.getClanak_id());
                 preparedStatement1.setInt(2, aktivnost);
-                preparedStatement1.executeUpdate();
+                preparedStatement1.addBatch();
             }
+            preparedStatement1.executeBatch();
 
+            connection.commit();
             clanak.setBr_poseta(0);
 
         } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback(); // Vraćanje transakcije u slučaju greške
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
@@ -315,11 +336,12 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
-            if(filter.equalsIgnoreCase("najnoviji")){
-                return 10;
+            if(filter.equalsIgnoreCase("naj")){
+                statement = connection.prepareStatement("SELECT count(*) FROM clanak ORDER BY vreme DESC");
+                resultSet = statement.executeQuery();
 
             }
-            else if(filter.equalsIgnoreCase("najcitaniji")) {
+            else if(filter.equalsIgnoreCase("najc")) {
                 statement = connection.prepareStatement("SELECT count(*) FROM clanak WHERE vreme >= DATE_SUB(NOW(), INTERVAL 1 MONTH) ORDER BY br_poseta DESC");
                 resultSet = statement.executeQuery();
             }

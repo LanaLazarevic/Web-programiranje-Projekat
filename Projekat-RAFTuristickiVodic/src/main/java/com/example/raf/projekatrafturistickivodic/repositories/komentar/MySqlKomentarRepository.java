@@ -17,7 +17,7 @@ public class MySqlKomentarRepository extends MySqlAbstractRepository implements 
         try {
             connection = this.newConnection();
 
-            preparedStatement = connection.prepareStatement("SELECT * FROM komentar where clanak = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM komentar where clanak = ? ORDER BY datum DESC");
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
             while(resultSet.next()) {

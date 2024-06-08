@@ -49,8 +49,9 @@ public class UserService {
         return this.userRepository.addKorisnik(korisnik);
     }
 
-    public List<Korisnik> findAllKorisnik(){
-        return this.userRepository.findAllKorisnik();
+    public List<Korisnik> findAllKorisnik(int limit, int page){
+        int offset = (page - 1) * limit;
+        return this.userRepository.findAllKorisnik(limit, offset);
     }
 
     public void changeStatus(Integer id){
@@ -64,6 +65,12 @@ public class UserService {
     public Korisnik findKorisnik(String email){
         return this.userRepository.findKorisnik(email);
     }
+
+    public int countKorisnik(){
+        return  this.userRepository.countKorisnika();
+    }
+
+
     public boolean isAuthorized(String token){
         Algorithm algorithm = Algorithm.HMAC256("secret");
         JWTVerifier verifier = JWT.require(algorithm).build();

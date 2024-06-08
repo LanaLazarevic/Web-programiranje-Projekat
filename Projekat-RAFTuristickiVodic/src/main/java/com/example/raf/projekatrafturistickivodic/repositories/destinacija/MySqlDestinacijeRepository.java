@@ -75,10 +75,13 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
         try {
 
             connection = this.newConnection();
+            connection.setAutoCommit(false);
+
             preparedStatement2 = connection.prepareStatement("select clanak_id from clanak WHERE destinacija = ?");
             preparedStatement2.setInt(1, id);
             resultSet = preparedStatement2.executeQuery();
             if (resultSet.next()) {
+                connection.rollback();
                 return "Ne moze da se izbrise ova destinacija posto postoje clanci o ovoj destinaciji";
             }
 
@@ -86,8 +89,18 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
 
+            connection.commit();
+
         } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
             e.printStackTrace();
+            return "Došlo je do greške prilikom brisanja";
         } finally {
             this.closeStatement(preparedStatement);
             this.closeStatement(preparedStatement2);
@@ -162,7 +175,7 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
 
             statement = connection.createStatement();
             resultSet = statement.executeQuery("select count(*) from destinacija");
-            while (resultSet.next()) {
+            if (resultSet.next()) {
                 br = resultSet.getInt(1);
             }
 
