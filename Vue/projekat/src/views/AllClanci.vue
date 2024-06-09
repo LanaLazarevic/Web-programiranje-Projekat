@@ -10,17 +10,20 @@
         <th scope="col">Datum</th>
         <th scope="col">Izmena</th>
         <th scope="col">Brisanje</th>
+        <th scope="col">Saznaj više</th>
       </tr>
       </thead>
       <tbody>
       <tr v-for="clanak in clanci" :key="clanak.clanak_id">
-        <td>{{ clanak.naslov  }}</td>
+        <td>
+          {{ clanak.naslov }}</td>
         <td>{{ clanak.tekst | shortText }}</td>
         <td>{{ clanak.autor }}</td>
         <td>{{ getDestinacijaName(clanak.destinacija) }}</td>
         <td>{{ clanak.vreme }}</td>
         <td><button @click="updateclanak()">Izmeni</button></td>
         <td><button @click="deleteclanak(clanak.clanak_id)">Obriši</button></td>
+        <td> <router-link :to="{ name: 'AClanak', params: { id: clanak.clanak_id } }" class="btn btn-dark">...</router-link></td>
       </tr>
       </tbody>
     </table>

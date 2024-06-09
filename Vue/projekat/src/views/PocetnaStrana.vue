@@ -7,6 +7,7 @@
         <th scope="col">Opis</th>
         <th scope="col">Destinacija</th>
         <th scope="col">Datum</th>
+        <th scope="col">Saznaj više</th>
       </tr>
       </thead>
       <tbody>
@@ -15,6 +16,7 @@
         <td>{{ clanak.tekst | shortText }}</td>
         <td>{{ getDestinacijaName(clanak.destinacija) }}</td>
         <td>{{ clanak.vreme }}</td>
+        <td> <router-link :to="{ name: 'AClanak', params: { id: clanak.clanak_id } }" class="btn btn-dark">...</router-link></td>
       </tr>
       </tbody>
     </table>

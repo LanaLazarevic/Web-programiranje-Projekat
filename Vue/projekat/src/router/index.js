@@ -98,6 +98,15 @@ const routes = [
     },
     props: true,
     component: ()=>import('../views/IzmenaKorisnika.vue')
+  },
+  {
+    path: '/clanak',
+    name: 'AClanak',
+    meta: {
+      authRequired: true,
+    },
+    props: true,
+    component: ()=>import('../views/AClanak.vue')
   }
 ]
 

@@ -28,6 +28,7 @@ export default {
         const response = await this.$axios.post('/api/dest', {
           ime: this.ime,
           opis: this.opis,
+
         });
         if(response.data)
           this.message = 'Destinacija uspešno dodata!';
