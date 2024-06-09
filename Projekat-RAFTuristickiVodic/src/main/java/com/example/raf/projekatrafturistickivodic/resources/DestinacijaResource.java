@@ -8,8 +8,11 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Path("/dest")
 public class DestinacijaResource {
@@ -26,6 +29,39 @@ public class DestinacijaResource {
         int br = this.destinacijaService.countDestinacija();
         response.put("destinacijee", this.destinacijaService.allDestinacije(limit,page));
         response.put("stranice", Math.ceil( (double) br / limit));
+        return Response.ok(response).build();
+    }
+
+    @GET
+    @Path("/ids")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getDestinacije(@QueryParam("page")int page,
+                                   @QueryParam("limit") int limit,
+                                   @QueryParam("ids") String ids)
+    {
+        Map<String, Object> response = new HashMap<>();
+        List<Integer> idList = Arrays.stream(ids.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+        if (idList.isEmpty()) {
+            response.put("message", "No IDs provided");
+            return Response.status(Response.Status.BAD_REQUEST).entity(response).build();
+        }
+        List<Destinacija> destinacije = destinacijaService.allDestinacijeByIds(limit, page, idList);
+        response.put("destinacije", destinacije);
+
+        return Response.ok(response).build();
+    }
+
+    @GET
+    @Path("/ime/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getDestinacije(@PathParam("id") int id)
+    {
+        Map<String, Object> response = new HashMap<>();
+
+
+       String ime = destinacijaService.getDestinacija(id);
+        response.put("ime", ime);
+
         return Response.ok(response).build();
     }
 

@@ -138,19 +138,19 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
     }
 
     @Override
-    public Integer findDestinacijaIdByName(String destinacijaName) {
+    public String findDestinacijaById(Integer id) {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
-        Integer indeks = null;
+        String ime = null;
         try {
             connection = this.newConnection();
 
-            statement = connection.prepareStatement("select destinacija_id from destinacija where ime = ?");
-            statement.setString(1, destinacijaName);
+            statement = connection.prepareStatement("select ime from destinacija where destinacija_id = ?");
+            statement.setInt(1, id);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                indeks = resultSet.getInt("destinacija_id");
+                ime = resultSet.getString("ime");
             }
 
         } catch (Exception e) {
@@ -161,7 +161,50 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
             this.closeConnection(connection);
         }
 
-        return indeks;
+        return ime;
+    }
+
+    @Override
+    public List<Destinacija> findAllDestinacijeByIds(int limit, int offset, List<Integer> ids) {
+        List<Destinacija> destinacijas = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = this.newConnection();
+
+            StringBuilder query = new StringBuilder("SELECT * FROM destinacija WHERE destinacija_id IN (");
+            for (int i = 0; i < ids.size(); i++) {
+                query.append("?");
+                if (i < ids.size() - 1) {
+                    query.append(",");
+                }
+            }
+            query.append(") LIMIT ? OFFSET ?");
+
+            statement = connection.prepareStatement(query.toString());
+
+            for (int i = 0; i < ids.size(); i++) {
+                statement.setInt(i + 1, ids.get(i));
+            }
+            statement.setInt(ids.size() + 1, limit);
+            statement.setInt(ids.size() + 2, offset);
+
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                destinacijas.add(new Destinacija(resultSet.getInt("destinacija_id"),
+                        resultSet.getString("ime"), resultSet.getString("opis")));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.closeStatement(statement);
+            this.closeResultSet(resultSet);
+            this.closeConnection(connection);
+        }
+
+        return destinacijas;
     }
 
     @Override

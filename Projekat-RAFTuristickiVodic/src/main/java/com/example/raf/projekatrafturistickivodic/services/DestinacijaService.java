@@ -30,4 +30,14 @@ public class DestinacijaService {
     public int countDestinacija() {
         return this.destinacijeRepository.countdestinacije();
     }
+
+    public List<Destinacija> allDestinacijeByIds(int limit, int page, List<Integer> ids){
+        int offset = (page - 1) * limit;
+        return this.destinacijeRepository.findAllDestinacijeByIds(limit,offset, ids);
+    }
+
+    public String getDestinacija(Integer id) {
+        return this.destinacijeRepository.findDestinacijaById(id);
+    }
+
 }

@@ -144,18 +144,20 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
     public Korisnik updateKorisnik(Korisnik korisnik) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+        System.out.println("id: " + korisnik.getKorisnik_id());
+        System.out.println("ime: " + korisnik.getIme());
+        System.out.println("prezime: " + korisnik.getPrezime());
+        System.out.println("tip: " + korisnik.getTip());
+        System.out.println("email: " + korisnik.getEmail());
         try {
 
             connection = this.newConnection();
-            String hashedPassword = DigestUtils.sha256Hex(korisnik.getLozinka());
-            preparedStatement = connection.prepareStatement("UPDATE korisnik SET email = ?, ime = ?, prezime = ?, tip = ?, lozinka = ?, status = ? WHERE korisnik_id = ?");
+            preparedStatement = connection.prepareStatement("UPDATE korisnik SET email = ?, ime = ?, prezime = ?, tip = ? WHERE korisnik_id = ?");
             preparedStatement.setString(1, korisnik.getEmail()); ;
             preparedStatement.setString(2, korisnik.getIme());
             preparedStatement.setString(3, korisnik.getPrezime());
             preparedStatement.setString(4, korisnik.getTip());
-            preparedStatement.setString(5, hashedPassword);
-            preparedStatement.setString(6, korisnik.getStatus());
-            preparedStatement.setInt(7, korisnik.getKorisnik_id());
+            preparedStatement.setInt(5, korisnik.getKorisnik_id());
             preparedStatement.executeUpdate();
 
 

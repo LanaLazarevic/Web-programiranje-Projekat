@@ -10,6 +10,7 @@ public interface DestinacijeRepository {
     Destinacija updateDestinacija(Destinacija destinacija);
     String deleteDestinacija(Integer id);
     Destinacija addDestinacija(Destinacija destinacija);
-    Integer findDestinacijaIdByName(String destinacijaName);
+    String findDestinacijaById(Integer id);
+    List<Destinacija> findAllDestinacijeByIds(int limit, int offset, List<Integer> ids);
     int countdestinacije();
 }
