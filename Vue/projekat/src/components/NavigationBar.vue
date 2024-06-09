@@ -35,13 +35,11 @@
 </template>
 
 <script>
-import HomeView from "@/views/HomeView.vue";
 import {EventBus} from "@/plugins/event-bus";
 
 export default {
   name: "NavigationBar",
-  // eslint-disable-next-line vue/no-unused-components
-  components: {HomeView},
+
   props: ['ime', 'uloga'],
 
   computed: {

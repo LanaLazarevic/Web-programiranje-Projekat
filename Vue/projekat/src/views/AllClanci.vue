@@ -6,6 +6,7 @@
         <th scope="col">Clanak</th>
         <th scope="col">Opis</th>
         <th scope="col">Autor</th>
+        <th scope="col">Destinacija</th>
         <th scope="col">Datum</th>
         <th scope="col">Izmena</th>
         <th scope="col">Brisanje</th>
@@ -16,6 +17,7 @@
         <td>{{ clanak.naslov  }}</td>
         <td>{{ clanak.tekst | shortText }}</td>
         <td>{{ clanak.autor }}</td>
+        <td>{{ getDestinacijaName(clanak.destinacija) }}</td>
         <td>{{ clanak.vreme }}</td>
         <td><button @click="updateclanak()">Izmeni</button></td>
         <td><button @click="deleteclanak(clanak.clanak_id)">Obriši</button></td>
@@ -45,6 +47,7 @@ export default {
   data() {
     return {
       clanci: [],
+      destinacije:[],
       currentPage:1,
       limit: 5,
       totalPages:0,
@@ -56,31 +59,32 @@ export default {
   methods: {
     async loadClanci(page) {
       try {
-        const response = await this.$axios.get(`/api/clanak/p`, {
+        const response = await this.$axios.get(`/api/clanak/naj`, {
           params: {
             limit: this.limit,
             page: page
           }
         });
-        console.log('API Response:', response);
         console.log('API Response:', response.data);
         this.clanci = response.data.clancii;
         this.totalPages = response.data.stranice;
+
+        const listaid = this.clanci.map(clanak => clanak.destinacija);
+
+        const idsString = listaid.join(',');
+
+        const response2 = await this.$axios.get(`/api/dest/ids`, {
+          params: {
+            limit: this.limit,
+            page: page,
+            ids: idsString,
+          }
+        });
+        console.log('API Response:', response2.data);
+        this.destinacije = response2.data.destinacije;
       } catch (error) {
         console.error('Došlo je do greške pri učitavanju destinacija:', error);
       }
-    },
-    async deleteclanak(destinacijaId) {
-      try {
-        // eslint-disable-next-line no-unused-vars
-        const response = await this.$axios.delete(`api/clanak/${destinacijaId}`);
-        this.loadDestinacije(this.currentPage);
-      } catch (error) {
-        console.error('Došlo je do greške pri brisanju destinacije:', error);
-      }
-    },
-    updateclanak() {
-
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {
@@ -93,8 +97,26 @@ export default {
         this.currentPage--;
         this.loadDestinacije(this.currentPage);
       }
-    }
+    },
+    findDestinaciju(destinacijaId) {
+      return this.destinacije.find(dest => dest.destinacija_id === destinacijaId) || null;
+    },
+    getDestinacijaName(destinacijaId) {
+      const destinacija = this.findDestinaciju(destinacijaId);
+      return destinacija ? destinacija.ime : '';
+    },
+    async deleteclanak(destinacijaId) {
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const response = await this.$axios.delete(`api/clanak/${destinacijaId}`);
+        this.loadDestinacije(this.currentPage);
+      } catch (error) {
+        console.error('Došlo je do greške pri brisanju destinacije:', error);
+      }
+    },
+    updateclanak() {
 
+    }
   }
 }
 </script>

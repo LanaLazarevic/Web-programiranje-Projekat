@@ -53,7 +53,7 @@ export default {
   methods: {
     async loadClanci(page) {
       try {
-        const response = await this.$axios.get(`/api/clanak/najc`, {
+        const response = await this.$axios.get(`/api/clanak/naj`, {
           params: {
             limit: this.limit,
             page: page
@@ -62,13 +62,20 @@ export default {
         console.log('API Response:', response.data);
         this.clanci = response.data.clancii;
         this.totalPages = response.data.stranice;
-        const response2 = await this.$axios.get(`/api/dest`, {
+
+        const listaid = this.clanci.map(clanak => clanak.destinacija);
+
+        const idsString = listaid.join(',');
+
+        const response2 = await this.$axios.get(`/api/dest/ids`, {
           params: {
-            limit: 501,
-            page: 1
+            limit: this.limit,
+            page: page,
+            ids: idsString,
           }
         });
-        this.destinacije = response2.data.destinacijee;
+        console.log('API Response:', response2.data);
+        this.destinacije = response2.data.destinacije;
       } catch (error) {
         console.error('Došlo je do greške pri učitavanju destinacija:', error);
       }
@@ -88,10 +95,10 @@ export default {
     findDestinaciju(destinacijaId) {
       return this.destinacije.find(dest => dest.destinacija_id === destinacijaId) || null;
     },
-  getDestinacijaName(destinacijaId) {
-    const destinacija = this.findDestinaciju(destinacijaId);
-    return destinacija ? destinacija.ime : '';
-  }
+    getDestinacijaName(destinacijaId) {
+      const destinacija = this.findDestinaciju(destinacijaId);
+      return destinacija ? destinacija.ime : '';
+    }
   }
 }
 </script>

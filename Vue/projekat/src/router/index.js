@@ -71,6 +71,33 @@ const routes = [
       authRequired: true,
     },
     component: () => import(/* webpackChunkName: "about" */ '../views/NoviKorisnik.vue')
+  },
+  {
+    path: '/clancipodestinaciji',
+    name: 'ClanciByDestinacija',
+    meta: {
+      authRequired: true,
+    },
+    props: true,
+    component: ()=>import('../views/AllClanciByDestinacija.vue')
+  },
+  {
+    path: '/izmenadestinacije',
+    name: 'IzmenaDestinacije',
+    meta: {
+      authRequired: true,
+    },
+    props: true,
+    component: ()=>import('../views/IzmenaDestinacije.vue')
+  },
+  {
+    path: '/izmenakorisnika',
+    name: 'IzmenaKorisnika',
+    meta: {
+      authRequired: true,
+    },
+    props: true,
+    component: ()=>import('../views/IzmenaKorisnika.vue')
   }
 ]
 

@@ -19,7 +19,7 @@
         <td>{{ korisnik.email }}</td>
         <td>{{ korisnik.tip }}</td>
         <td>{{ korisnik.status }}</td>
-        <td><button @click="updatekorisnik()">Izmeni</button></td>
+        <td><router-link :to="{name: 'IzmenaKorisnika', params: { id: korisnik.korisnik_id, imee:korisnik.ime, prezimee:korisnik.prezime, tipp:korisnik.tip, emaill:korisnik.email }}" class="btn btn-dark">Izmeni</router-link></td>
         <td><button @click="changestatus(korisnik.korisnik_id)">Izmena statusa</button></td>
       </tr>
       </tbody>

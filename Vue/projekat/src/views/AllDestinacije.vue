@@ -11,10 +11,12 @@
       </thead>
       <tbody>
       <tr v-for="destinacija in destinacije" :key="destinacija.destinacija_id">
-        <td>{{ destinacija.ime  }}</td>
+        <td> <router-link :to="{ name: 'ClanciByDestinacija', params: { id: destinacija.destinacija_id, ime:destinacija.ime } }">
+          {{ destinacija.ime }}
+        </router-link></td>
         <td>{{ destinacija.opis }}</td>
         <td><button @click="deleteDestinacija(destinacija.destinacija_id)">Obriši</button></td>
-        <td><button >Izmeni</button></td>
+        <td><router-link :to="{name: 'IzmenaDestinacije', params: { id: destinacija.destinacija_id, imee:destinacija.ime, opiss:destinacija.opis }}" class="btn btn-dark">Izmeni</router-link></td>
       </tr>
       </tbody>
     </table>
