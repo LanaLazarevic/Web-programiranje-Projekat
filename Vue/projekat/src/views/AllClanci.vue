@@ -75,8 +75,8 @@ export default {
 
         const response2 = await this.$axios.get(`/api/dest/ids`, {
           params: {
-            limit: this.limit,
-            page: page,
+            limit: 501,
+            page: 1,
             ids: idsString,
           }
         });
