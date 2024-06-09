@@ -10,16 +10,30 @@ import java.util.List;
 public class MySqlAktivnosrtRepository extends MySqlAbstractRepository implements AktivnostRepository {
 
     @Override
-    public List<Aktivnost> findAllAktivnost() {
+    public List<Aktivnost> findAllAktivnost(List<Integer> ids) {
         List<Aktivnost> aktivnosts = new ArrayList<>();
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
 
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("select * from aktivnost");
+            StringBuilder query = new StringBuilder("SELECT * FROM aktivnost WHERE aktivnost_id IN (");
+            for (int i = 0; i < ids.size(); i++) {
+                query.append("?");
+                if (i < ids.size() - 1) {
+                    query.append(",");
+                }
+            }
+            query.append(")");
+
+            statement = connection.prepareStatement(query.toString());
+
+            for (int i = 0; i < ids.size(); i++) {
+                statement.setInt(i + 1, ids.get(i));
+            }
+            resultSet = statement.executeQuery();
+
             while (resultSet.next()) {
                 aktivnosts.add(new Aktivnost(resultSet.getInt("aktivnost_id"),
                         resultSet.getString("naziv")));
@@ -40,25 +54,38 @@ public class MySqlAktivnosrtRepository extends MySqlAbstractRepository implement
     public Aktivnost addAktivnost(Aktivnost aktivnost) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement1 = null;
+        ResultSet resultSet1 = null;
         ResultSet resultSet = null;
         try {
             connection = this.newConnection();
 
-            String[] generatedColumns = {"aktivnost_id"};
+            preparedStatement1 = connection.prepareStatement("select * from aktivnost where naziv=?");
+            preparedStatement1.setString(1, aktivnost.getNaziv());
+            resultSet1 = preparedStatement1.executeQuery();
+            if (resultSet1.next()) {
+                aktivnost.setAktivnost_id(resultSet1.getInt("aktivnost_id"));
+            } else {
+                String[] generatedColumns = {"aktivnost_id"};
 
-            preparedStatement = connection.prepareStatement("INSERT INTO aktivnost (naziv) VALUES(?)", generatedColumns);
-            preparedStatement.setString(1, aktivnost.getNaziv());
-            preparedStatement.executeUpdate();
-            resultSet = preparedStatement.getGeneratedKeys();
+                preparedStatement = connection.prepareStatement("INSERT INTO aktivnost (naziv) VALUES(?)", generatedColumns);
+                preparedStatement.setString(1, aktivnost.getNaziv());
+                preparedStatement.executeUpdate();
+                resultSet = preparedStatement.getGeneratedKeys();
 
-            if (resultSet.next()) {
-                aktivnost.setAktivnost_id(resultSet.getInt(1));
+                if (resultSet.next()) {
+                    aktivnost.setAktivnost_id(resultSet.getInt(1));
+                }
+
             }
+
 
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
+            this.closeResultSet(resultSet1);
+            this.closeStatement(preparedStatement1);
             this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }

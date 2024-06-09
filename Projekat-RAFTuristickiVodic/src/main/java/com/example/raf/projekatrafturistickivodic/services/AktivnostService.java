@@ -14,7 +14,7 @@ public class AktivnostService {
         return this.aktivnostRepository.addAktivnost(aktivnost);
     }
 
-    public List<Aktivnost> findAllAktivnost() {
-        return this.aktivnostRepository.findAllAktivnost();
+    public List<Aktivnost> findAllAktivnost(List<Integer> ids) {
+        return this.aktivnostRepository.findAllAktivnost(ids);
     }
 }
