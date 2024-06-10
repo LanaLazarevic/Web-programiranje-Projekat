@@ -1,10 +1,9 @@
 <template>
   <div>
-    <ClanciTabela
-        :clanci="clanci"
+    <DestinacijeTabela
         :destinacije="destinacije"
         :show="false"
-    />
+        :putanja="false"/>
     <div class="pagination">
       <button @click="previousPage" :disabled="currentPage === 1">Nazad</button>
       <span>Stranica {{ currentPage }} od {{ totalPages }}</span>
@@ -14,49 +13,34 @@
 </template>
 
 <script>
-
-import ClanciTabela from "@/components/ClanciTabela.vue";
-
+import DestinacijeTabela from "@/components/DestinacijeTabela.vue";
 export default {
-  name: "NajCitanije",
-  components: {ClanciTabela},
+  name: "AllDestinacijeBez",
+  components: {DestinacijeTabela},
   data() {
     return {
-      clanci: [],
       destinacije: [],
       currentPage:1,
       limit: 5,
-      totalPages:0,
+      totalPages: 0,
     }
   },
   created() {
-    this.loadClanci(1);
+    this.loadDestinacije(1);
   },
   methods: {
-    async loadClanci(page) {
+    async loadDestinacije(page) {
       try {
-        const response = await this.$axios.get(`/api/clanak/sve/najc`, {
+        const response = await this.$axios.get(`/api/dest/sve`, {
           params: {
             limit: this.limit,
             page: page
           }
         });
+        console.log('API Response:', response);
         console.log('API Response:', response.data);
-        this.clanci = response.data.clancii;
+        this.destinacije = response.data.destinacijee;
         this.totalPages = response.data.stranice;
-
-        const listaid = [...new Set(this.clanci.map(clanak => clanak.destinacija))];
-        const idsString = listaid.join(',');
-
-        const response2 = await this.$axios.get(`/api/dest/ids`, {
-          params: {
-            limit: 501,
-            page: 1,
-            ids: idsString,
-          }
-        });
-        console.log('API Response:', response2.data);
-        this.destinacije = response2.data.destinacije;
       } catch (error) {
         console.error('Došlo je do greške pri učitavanju destinacija:', error);
       }
@@ -64,15 +48,16 @@ export default {
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
-        this.loadClanci(this.currentPage);
+        this.loadDestinacije(this.currentPage);
       }
     },
     previousPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
-        this.loadClanci(this.currentPage);
+        this.loadDestinacije(this.currentPage);
       }
     }
+
   }
 }
 </script>

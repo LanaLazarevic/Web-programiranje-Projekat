@@ -12,15 +12,6 @@
 
       <p>{{ clanak.tekst }}</p>
 
-      <h3 v-if="kom.length>0">Komentari</h3>
-      <ul class="list-group mb-3">
-        <li v-for="komentar in kom" :key="komentar.komentar_id" class="list-group-item">
-          <p><strong>{{ komentar.autor }}</strong></p>
-          <p>{{ komentar.tekst }}</p>
-          <small class="text-muted">{{ komentar.datum }}</small>
-        </li>
-      </ul>
-
       <h4>Dodaj komentar</h4>
       <form @submit.prevent="submit">
         <div class="mb-3">
@@ -33,6 +24,16 @@
         </div>
         <button type="submit" class="btn btn-primary">Pošalji</button>
       </form>
+
+      <h3 v-if="kom.length>0">Komentari</h3>
+      <ul class="list-group mb-3">
+        <li v-for="komentar in kom" :key="komentar.komentar_id" class="list-group-item">
+          <p><strong>{{ komentar.autor }}</strong></p>
+          <p>{{ komentar.tekst }}</p>
+          <small class="text-muted">{{ komentar.datum }}</small>
+        </li>
+      </ul>
+
     </div>
   </div>
 </template>
@@ -79,6 +80,8 @@
 
           const response4 = await this.$axios.get(`/api/dest/ime/`+this.clanak.destinacija);
           this.destinacijaa = response4.data.ime;
+
+          this.$axios.post(`/api/clanak/`+this.id);
 
         } catch (error) {
           console.error('Error fetching article:', error);

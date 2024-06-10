@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <NavigationBar :ime="ime" :uloga="uloga" /> <!-- Prosleđujemo ime kao prop -->
+    <NavigationBar :ime="ime" :uloga="uloga" :jwt="jwt" />
     <router-view />
   </div>
 </template>
@@ -15,7 +15,8 @@ export default {
   data() {
     return {
       ime: '',
-      uloga:''
+      uloga:'',
+      jwt:false,
     };
   },
   created() {
@@ -25,6 +26,7 @@ export default {
       console.log('Login successful, ime:', ime);
       this.ime = ime;
       this.uloga = localStorage.getItem('uloga') || '';
+      this.jwt = !this.ime.startsWith("Guest");
     });
   }
 };

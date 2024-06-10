@@ -15,17 +15,23 @@
               <router-link :to="{name: 'NajCitanije'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'NajCitanije'}">Najcitaniji clanci</router-link>
             </li>
             <li class="nav-item">
-              <router-link :to="{name: 'AllDestinacije'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'AllDestinacije'}">Destinacije</router-link>
+              <router-link :to="{name: 'AllDestinacijeBezJWT'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'AllDestinacijeBezJWT'}">Destinacije</router-link>
             </li>
-            <li class="nav-item">
-              <router-link :to="{name: 'AllClanak'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'AllClanak'}">Clanci</router-link>
+            <li class="nav-item" v-if="jwt === true">
+              <router-link :to="{name: 'AllDestinacije'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'AllDestinacije'}">Sve Destinacije</router-link>
             </li>
-            <li class="nav-item" v-if="uloga === 'admin'">
+            <li class="nav-item" v-if="jwt === true">
+              <router-link :to="{name: 'AllClanak'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'AllClanak'}">Svi Clanci</router-link>
+            </li>
+            <li class="nav-item" v-if="jwt === true && uloga === 'admin'">
               <router-link :to="{name: 'AllKorisnici'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'AllKorisnici'}">Korisnici</router-link>
+            </li>
+            <li class="nav-item" v-if="jwt === false">
+              <router-link :to="{name: 'Login'}" tag="a" class="nav-link" :class="{active: this.$router.currentRoute.name === 'Login'}">Login</router-link>
             </li>
           </ul>
           <h2 class="m-2">{{ ime }}</h2>
-          <form v-if="canLogout" class="d-flex" @submit.prevent="logout">
+          <form v-if="jwt === true" class="d-flex" @submit.prevent="logout">
             <button class="btn btn-outline-secondary" type="submit">Logout</button>
           </form>
         </div>
@@ -40,7 +46,7 @@ import {EventBus} from "@/plugins/event-bus";
 export default {
   name: "NavigationBar",
 
-  props: ['ime', 'uloga'],
+  props: ['ime', 'uloga', 'jwt'],
 
   computed: {
     canLogout() {
@@ -52,7 +58,8 @@ export default {
       localStorage.removeItem('jwt');
       localStorage.removeItem('ime');
       localStorage.removeItem('uloga');
-      this.$router.push({name: 'Login'});
+      if(this.$route.path !== '/')
+        this.$router.push({name: 'PocetnaStrana'});
       EventBus.$emit('login-success', 'Guest');
     }
   }

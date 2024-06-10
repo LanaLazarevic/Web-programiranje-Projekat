@@ -32,9 +32,8 @@ export default {
         password: this.password,
       }).then(response => {
         localStorage.setItem('jwt', response.data.jwt)
-        if (this.$route.name !== 'PocetnaStrana') {
-          this.$router.push({name: 'PocetnaStrana'});
-        }
+        this.$router.push({name: 'AllDestinacije'});
+
 
         EventBus.$emit('login-success', localStorage.getItem("ime"));
       })

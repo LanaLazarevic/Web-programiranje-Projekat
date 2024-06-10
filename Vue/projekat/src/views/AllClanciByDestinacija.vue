@@ -1,29 +1,12 @@
 <template>
   <div>
-    <table class="table table-striped table-hover">
-      <thead>
-      <tr>
-        <th scope="col">Clanak</th>
-        <th scope="col">Opis</th>
-        <th scope="col">Destinacija</th>
-        <th scope="col">Datum</th>
-        <th scope="col">Izmena</th>
-        <th scope="col">Brisanje</th>
-        <th scope="col">Saznaj više</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="clanak in clanci" :key="clanak.clanak_id">
-        <td>{{ clanak.naslov  }}</td>
-        <td>{{ clanak.tekst | shortText }}</td>
-        <td>{{ ime }}</td>
-        <td>{{ clanak.vreme }}</td>
-        <td><button @click="updateclanak()">Izmeni</button></td>
-        <td><button @click="deleteclanak(clanak.clanak_id)">Obriši</button></td>
-        <td> <router-link :to="{ name: 'AClanak', params: { id: clanak.clanak_id } }" class="btn btn-dark">...</router-link></td>
-      </tr>
-      </tbody>
-    </table>
+    <ClanciTabela
+        :clanci="clanci"
+        :destinacije="destinacije"
+        @delete="deleteclanak"
+        @update="updateclanak"
+        :show="true"
+    />
     <div class="pagination">
       <button @click="previousPage" :disabled="currentPage === 1">Nazad</button>
       <span>Stranica {{ currentPage }} od {{ totalPages }}</span>
@@ -33,16 +16,11 @@
 </template>
 
 <script>
+import ClanciTabela from "@/components/ClanciTabela.vue";
+
 export default {
   name:'ClanciByDestinacija',
-  filters: {
-    shortText(value) {
-      if (value.length < 30) {
-        return value;
-      }
-      return value.slice(0, 30) + '...'
-    }
-  },
+  components: {ClanciTabela},
   props: {
     id: {
       type: Number,
@@ -56,6 +34,7 @@ export default {
   data() {
     return {
       clanci: [],
+      destinacije:[],
       currentPage:1,
       limit: 5,
       totalPages:0,
@@ -64,7 +43,7 @@ export default {
   methods: {
     async loadClanci(page) {
       try {
-        const response = await this.$axios.get(`/api/clanak/` + this.id, {
+        const response = await this.$axios.get(`/api/clanak/sve/` + this.id, {
           params: {
             limit: this.limit,
             page: page
@@ -74,6 +53,18 @@ export default {
         console.log('API Response:', response.data);
         this.clanci = response.data.clancii;
         this.totalPages = response.data.stranice;
+        const listaid = [...new Set(this.clanci.map(clanak => clanak.destinacija))];
+        const idsString = listaid.join(',');
+
+        const response2 = await this.$axios.get(`/api/dest/ids`, {
+          params: {
+            limit: 501,
+            page: 1,
+            ids: idsString,
+          }
+        });
+        console.log('API Response:', response2.data);
+        this.destinacije = response2.data.destinacije;
       } catch (error) {
         console.error('Došlo je do greške pri učitavanju destinacija:', error);
       }
@@ -81,31 +72,31 @@ export default {
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
-        this.loadDestinacije(this.currentPage);
+        this.loadClanci(this.currentPage);
       }
     },
     previousPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
-        this.loadDestinacije(this.currentPage);
+        this.loadClanci(this.currentPage);
       }
+    },async deleteclanak(destinacijaId) {
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const response = await this.$axios.delete(`api/clanak/${destinacijaId}`);
+        this.loadClanci(this.currentPage);
+      } catch (error) {
+        console.error('Došlo je do greške pri brisanju destinacije:', error);
+      }
+    },
+    updateclanak() {
+
     }
   },
   created() {
     this.loadClanci(1);
   },
-  async deleteclanak(destinacijaId) {
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await this.$axios.delete(`api/clanak/${destinacijaId}`);
-      this.loadDestinacije(this.currentPage);
-    } catch (error) {
-      console.error('Došlo je do greške pri brisanju destinacije:', error);
-    }
-  },
-  updateclanak() {
 
-  }
 };
 </script>
 <style>

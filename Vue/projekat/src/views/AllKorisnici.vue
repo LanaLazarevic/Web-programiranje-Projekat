@@ -20,7 +20,8 @@
         <td>{{ korisnik.tip }}</td>
         <td>{{ korisnik.status }}</td>
         <td><router-link :to="{name: 'IzmenaKorisnika', params: { id: korisnik.korisnik_id, imee:korisnik.ime, prezimee:korisnik.prezime, tipp:korisnik.tip, emaill:korisnik.email }}" class="btn btn-dark">Izmeni</router-link></td>
-        <td><button @click="changestatus(korisnik.korisnik_id)">Izmena statusa</button></td>
+        <td v-if="korisnik.tip === 'admin'"></td>
+        <td v-if="korisnik.tip !== 'admin'"><button @click="changestatus(korisnik.korisnik_id)">Izmena statusa</button></td>
       </tr>
       </tbody>
     </table>
@@ -83,13 +84,13 @@ export default {
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
-        this.loadDestinacije(this.currentPage);
+        this.loadKorisnici(this.currentPage);
       }
     },
     previousPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
-        this.loadDestinacije(this.currentPage);
+        this.loadKorisnici(this.currentPage);
       }
     }
 

@@ -1,52 +1,34 @@
 <template>
   <div>
-    <table class="table table-striped table-hover">
-      <thead>
-      <tr>
-        <th scope="col">Clanak</th>
-        <th scope="col">Opis</th>
-        <th scope="col">Autor</th>
-        <th scope="col">Destinacija</th>
-        <th scope="col">Datum</th>
-        <th scope="col">Izmena</th>
-        <th scope="col">Brisanje</th>
-        <th scope="col">Saznaj više</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="clanak in clanci" :key="clanak.clanak_id">
-        <td>
-          {{ clanak.naslov }}</td>
-        <td>{{ clanak.tekst | shortText }}</td>
-        <td>{{ clanak.autor }}</td>
-        <td>{{ getDestinacijaName(clanak.destinacija) }}</td>
-        <td>{{ clanak.vreme }}</td>
-        <td><button @click="updateclanak()">Izmeni</button></td>
-        <td><button @click="deleteclanak(clanak.clanak_id)">Obriši</button></td>
-        <td> <router-link :to="{ name: 'AClanak', params: { id: clanak.clanak_id } }" class="btn btn-dark">...</router-link></td>
-      </tr>
-      </tbody>
-    </table>
+    <ClanciTabela
+        :clanci="clanci"
+        :destinacije="destinacije"
+        @delete="deleteclanak"
+        :show="true"
+        :putanja="true"
+    />
     <div class="pagination">
       <button @click="previousPage" :disabled="currentPage === 1">Nazad</button>
       <span>Stranica {{ currentPage }} od {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Napred</button>
     </div>
+
+
+    <div class="justify-content-center mt-2">
+      <router-link :to="{name: 'NoviClanak'}" class="btn btn-primary">Dodaj novi clanak</router-link>
+    </div>
+
   </div>
 </template>
 
+
 <script>
+
+import ClanciTabela from "@/components/ClanciTabela.vue";
 
 export default {
   name: "AllClanak",
-  filters: {
-    shortText(value) {
-      if (value.length < 30) {
-        return value;
-      }
-      return value.slice(0, 30) + '...'
-    }
-  },
+  components: {ClanciTabela},
   data() {
     return {
       clanci: [],
@@ -62,7 +44,7 @@ export default {
   methods: {
     async loadClanci(page) {
       try {
-        const response = await this.$axios.get(`/api/clanak/naj`, {
+        const response = await this.$axios.get(`/api/clanak/sve/p`, {
           params: {
             limit: this.limit,
             page: page
@@ -72,8 +54,7 @@ export default {
         this.clanci = response.data.clancii;
         this.totalPages = response.data.stranice;
 
-        const listaid = this.clanci.map(clanak => clanak.destinacija);
-
+        const listaid = [...new Set(this.clanci.map(clanak => clanak.destinacija))];
         const idsString = listaid.join(',');
 
         const response2 = await this.$axios.get(`/api/dest/ids`, {
@@ -92,33 +73,23 @@ export default {
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
-        this.loadDestinacije(this.currentPage);
+        this.loadClanci(this.currentPage);
       }
     },
     previousPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
-        this.loadDestinacije(this.currentPage);
+        this.loadClanci(this.currentPage);
       }
-    },
-    findDestinaciju(destinacijaId) {
-      return this.destinacije.find(dest => dest.destinacija_id === destinacijaId) || null;
-    },
-    getDestinacijaName(destinacijaId) {
-      const destinacija = this.findDestinaciju(destinacijaId);
-      return destinacija ? destinacija.ime : '';
     },
     async deleteclanak(destinacijaId) {
       try {
         // eslint-disable-next-line no-unused-vars
         const response = await this.$axios.delete(`api/clanak/${destinacijaId}`);
-        this.loadDestinacije(this.currentPage);
+        this.loadClanci(this.currentPage);
       } catch (error) {
         console.error('Došlo je do greške pri brisanju destinacije:', error);
       }
-    },
-    updateclanak() {
-
     }
   }
 }

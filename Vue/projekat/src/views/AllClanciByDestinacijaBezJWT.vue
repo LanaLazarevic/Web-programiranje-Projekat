@@ -14,33 +14,40 @@
 </template>
 
 <script>
-
 import ClanciTabela from "@/components/ClanciTabela.vue";
 
 export default {
-  name: "NajCitanije",
+  name:'ClanciByDestinacijaBezJWT',
   components: {ClanciTabela},
+  props: {
+    id: {
+      type: Number,
+      required: true
+    },
+    ime:{
+      type:String,
+      required: true
+    }
+  },
   data() {
     return {
       clanci: [],
-      destinacije: [],
       currentPage:1,
+      destinacije:[],
       limit: 5,
       totalPages:0,
-    }
-  },
-  created() {
-    this.loadClanci(1);
+    };
   },
   methods: {
     async loadClanci(page) {
       try {
-        const response = await this.$axios.get(`/api/clanak/sve/najc`, {
+        const response = await this.$axios.get(`/api/clanak/sve/` + this.id, {
           params: {
             limit: this.limit,
             page: page
           }
         });
+        console.log('API Response:', response);
         console.log('API Response:', response.data);
         this.clanci = response.data.clancii;
         this.totalPages = response.data.stranice;
@@ -73,10 +80,12 @@ export default {
         this.loadClanci(this.currentPage);
       }
     }
+  },
+  created() {
+    this.loadClanci(1);
   }
-}
+};
 </script>
-
 <style>
 .pagination {
   display: flex;

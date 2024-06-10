@@ -1,31 +1,15 @@
 <template>
   <div>
-    <table class="table table-striped table-hover">
-      <thead>
-      <tr>
-        <th scope="col">Destinacija</th>
-        <th scope="col">Opis</th>
-        <th scope="col">Obrisi</th>
-        <th scope="col">Izmeni</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="destinacija in destinacije" :key="destinacija.destinacija_id">
-        <td> <router-link :to="{ name: 'ClanciByDestinacija', params: { id: destinacija.destinacija_id, ime:destinacija.ime } }">
-          {{ destinacija.ime }}
-        </router-link></td>
-        <td>{{ destinacija.opis }}</td>
-        <td><button @click="deleteDestinacija(destinacija.destinacija_id)">Obriši</button></td>
-        <td><router-link :to="{name: 'IzmenaDestinacije', params: { id: destinacija.destinacija_id, imee:destinacija.ime, opiss:destinacija.opis }}" class="btn btn-dark">Izmeni</router-link></td>
-      </tr>
-      </tbody>
-    </table>
+    <DestinacijeTabela
+        :destinacije="destinacije"
+        @delete="deleteDestinacija"
+        :show="true"
+        :putanja="true"/>
     <div class="pagination">
       <button @click="previousPage" :disabled="currentPage === 1">Nazad</button>
       <span>Stranica {{ currentPage }} od {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Napred</button>
     </div>
-
     <div class="justify-content-center mt-2">
       <router-link :to="{name: 'NovaDestinacija'}" class="btn btn-primary">Dodaj novu destinaciju</router-link>
     </div>
@@ -33,9 +17,10 @@
 </template>
 
 <script>
-
+import DestinacijeTabela from "@/components/DestinacijeTabela.vue";
 export default {
   name: "AllDestinacije",
+  components: {DestinacijeTabela},
   data() {
     return {
       destinacije: [],
@@ -50,7 +35,7 @@ export default {
   methods: {
     async loadDestinacije(page) {
       try {
-        const response = await this.$axios.get(`/api/dest`, {
+        const response = await this.$axios.get(`/api/dest/sve`, {
           params: {
             limit: this.limit,
             page: page

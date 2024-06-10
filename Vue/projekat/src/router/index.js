@@ -1,38 +1,31 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
   {
     path: '/login',
     name: 'Login',
     component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
   },
   {
-    path: '/pocetna',
+    path: '/',
     name: 'PocetnaStrana',
-    meta: {
-      authRequired: true,
-    },
     component: () => import(/* webpackChunkName: "about" */ '../views/PocetnaStrana.vue')
   },
   {
     path: '/najcitaniji',
     name: 'NajCitanije',
-    meta: {
-      authRequired: true,
-    },
     component: () => import(/* webpackChunkName: "about" */ '../views/NajCitanije.vue')
   },
   {
     path: '/destinacije',
+    name: 'AllDestinacijeBezJWT',
+    component: () => import(/* webpackChunkName: "about" */ '../views/AllDestinacijeBezJWT.vue')
+  },
+  {
+    path: '/svedestinacije',
     name: 'AllDestinacije',
     meta: {
       authRequired: true,
@@ -73,7 +66,15 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/NoviKorisnik.vue')
   },
   {
-    path: '/clancipodestinaciji',
+    path: '/noviclanak',
+    name: 'NoviClanak',
+    meta: {
+      authRequired: true,
+    },
+    component: () => import(/* webpackChunkName: "about" */ '../views/NoviClanak.vue')
+  },
+  {
+    path: '/sviclancipodestinaciji',
     name: 'ClanciByDestinacija',
     meta: {
       authRequired: true,
@@ -91,6 +92,15 @@ const routes = [
     component: ()=>import('../views/IzmenaDestinacije.vue')
   },
   {
+    path: '/izmenaclanka',
+    name: 'IzmeniClanak',
+    meta: {
+      authRequired: true,
+    },
+    props: true,
+    component: ()=>import('../views/IzmeniClanak.vue')
+  },
+  {
     path: '/izmenakorisnika',
     name: 'IzmenaKorisnika',
     meta: {
@@ -102,11 +112,14 @@ const routes = [
   {
     path: '/clanak',
     name: 'AClanak',
-    meta: {
-      authRequired: true,
-    },
     props: true,
     component: ()=>import('../views/AClanak.vue')
+  },
+  {
+    path: "/clancipodestinaciji",
+    name: 'ClanciByDestinacijaBezJWT',
+    props: true,
+    component: () => import(/* webpackChunkName: "about" */ '../views/AllClanciByDestinacijaBezJWT.vue')
   }
 ]
 
@@ -127,6 +140,7 @@ router.beforeEach((to, from, next) => {
     const payload = JSON.parse(atob(jwt.split('.')[1]));
     
     localStorage.setItem("ime", payload.ime);
+    localStorage.setItem("prezime", payload.prezime);
     localStorage.setItem("uloga", payload.uloga);
 
     const expDate = new Date(payload.exp * 1000);
