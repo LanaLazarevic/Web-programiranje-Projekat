@@ -19,7 +19,8 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         try {
             connection = this.newConnection();
             if(filter.equalsIgnoreCase("naj")){
-                statement = connection.prepareStatement("SELECT * FROM clanak ORDER BY vreme DESC limit 10");
+                statement = connection.prepareStatement("SELECT * FROM clanak ORDER BY vreme DESC limit 10 OFFSET ?");
+                statement.setInt(1, offset);
                 resultSet = statement.executeQuery();
 
             }
@@ -77,12 +78,13 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         PreparedStatement umetni = null;
+        PreparedStatement deletemedju = null;
 
         try {
             connection = this.newConnection();
-            connection.setAutoCommit(false); // Početak transakcije
+            connection.setAutoCommit(false);
 
-            // Ažuriranje članka
+            // azuriranje
             preparedStatement = connection.prepareStatement("UPDATE clanak SET naslov = ?, tekst = ?, destinacija = ? WHERE clanak_id = ?");
             preparedStatement.setString(1, clanak.getNaslov());
             preparedStatement.setString(2, clanak.getTekst());
@@ -90,11 +92,10 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             preparedStatement.setInt(4, clanak.getClanak_id());
             preparedStatement.executeUpdate();
 
-            //brisanje medju tabele
-
-//            deletemedju = connection.prepareStatement("DELETE FROM clanak_aktivnost WHERE clanak = ?");
-//            deletemedju.setInt(1, clanak.getClanak_id());
-//            deletemedju.executeUpdate();
+            //brisanje medju
+            deletemedju = connection.prepareStatement("DELETE FROM clanak_aktivnost WHERE clanak = ?");
+            deletemedju.setInt(1, clanak.getClanak_id());
+            deletemedju.executeUpdate();
 
 
             // dodavanje novih aktivnosti
@@ -118,6 +119,7 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             }
             e.printStackTrace();
         } finally {
+            this.closeStatement(deletemedju);
             this.closeStatement(preparedStatement);
             this.closeStatement(umetni);
             this.closeConnection(connection);

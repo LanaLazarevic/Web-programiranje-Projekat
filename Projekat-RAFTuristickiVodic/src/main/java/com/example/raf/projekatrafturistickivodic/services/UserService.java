@@ -42,6 +42,7 @@ public class UserService {
                 .withSubject(email)
                 .withClaim("uloga", korisnik.getTip())
                 .withClaim("ime", korisnik.getIme())
+                .withClaim("prezime", korisnik.getPrezime())
                 .sign(algorithm);
     }
 

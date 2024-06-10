@@ -32,10 +32,7 @@ public class UserResource {
             response.put("message", jwt);
             return Response.status(422, "Unprocessable Entity").entity(response).build();
         }
-
         response.put("jwt", jwt);
-        response.put("ime", userService.findKorisnik(loginRequest.getEmail()).getIme());
-        response.put("uloga", userService.findKorisnik(loginRequest.getEmail()).getTip());
         return Response.ok(response).build();
     }
 

@@ -21,6 +21,7 @@ public class DestinacijaResource {
     DestinacijaService destinacijaService;
 
     @GET
+    @Path("/sve")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getDestinacija(@QueryParam("page")int page,
                                    @QueryParam("limit") int limit)

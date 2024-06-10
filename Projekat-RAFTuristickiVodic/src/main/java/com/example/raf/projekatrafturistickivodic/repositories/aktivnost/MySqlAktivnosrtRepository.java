@@ -83,10 +83,12 @@ public class MySqlAktivnosrtRepository extends MySqlAbstractRepository implement
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            this.closeStatement(preparedStatement);
+            if(preparedStatement != null)
+                this.closeStatement(preparedStatement);
             this.closeResultSet(resultSet1);
             this.closeStatement(preparedStatement1);
-            this.closeResultSet(resultSet);
+            if(resultSet != null)
+                this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
 

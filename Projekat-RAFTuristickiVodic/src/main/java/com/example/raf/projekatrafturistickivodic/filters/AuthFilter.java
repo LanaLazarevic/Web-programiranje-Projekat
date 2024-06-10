@@ -44,14 +44,17 @@ public class AuthFilter implements ContainerRequestFilter {
     }
 
     private boolean isAuthRequired(ContainerRequestContext req) {
-        if (req.getUriInfo().getPath().contains("login")) {
+        if (req.getUriInfo().getPath().contains("login") || req.getUriInfo().getPath().contains("naj")
+                || req.getUriInfo().getPath().contains("najc") || req.getUriInfo().getPath().contains("najt")
+                || req.getUriInfo().getPath().contains("sve") || req.getUriInfo().getPath().contains("ids")
+                || req.getUriInfo().getPath().contains("byid") || req.getUriInfo().getPath().contains("ime")) {
             return false;
         }
 
         List<Object> matchedResources = req.getUriInfo().getMatchedResources();
         for (Object matchedResource : matchedResources) {
             if (matchedResource instanceof DestinacijaResource || matchedResource instanceof AktinvostResource
-            || matchedResource instanceof ClanakResource || matchedResource instanceof KomentarResource
+            || matchedResource instanceof ClanakResource
             || matchedResource instanceof UserResource) {
                 return true;
             }

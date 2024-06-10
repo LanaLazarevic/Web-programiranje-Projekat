@@ -19,7 +19,7 @@ public class ClanakResource {
     ClanakService clanakService;
 
     @GET
-    @Path("/{filter}")
+    @Path("sve/{filter}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response findAllClanak(@PathParam("filter") String filter, @QueryParam("page") int page,
                                   @QueryParam("limit") int limit){
