@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface ClanakRepository {
     List<Clanak> findAllClanak(String filter, int limit, int offset);
-    Clanak updateClanak(Clanak clanak);
-    void deleteClanak(Integer id);
+    String updateClanak(Clanak clanak);
+    String deleteClanak(Integer id);
     void incrementbrposetioca(Integer id);
     Clanak addClanak(Clanak clanak);
     List<Clanak> findAllClanakByAktivnost(Integer id, int limit, int offset);

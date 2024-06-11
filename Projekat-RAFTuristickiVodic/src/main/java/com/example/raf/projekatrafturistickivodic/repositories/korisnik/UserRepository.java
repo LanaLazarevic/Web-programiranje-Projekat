@@ -9,7 +9,7 @@ public interface UserRepository {
      Korisnik findKorisnik(String email);
      Korisnik addKorisnik(Korisnik korisnik);
      void changeStatus(Integer id);
-     Korisnik updateKorisnik(Korisnik korisnik);
+     String updateKorisnik(Korisnik korisnik);
      List<Korisnik> findAllKorisnik(int limit, int offset);
      int countKorisnika();
 }

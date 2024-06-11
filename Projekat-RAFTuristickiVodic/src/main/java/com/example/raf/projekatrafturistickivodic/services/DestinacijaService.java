@@ -15,7 +15,7 @@ public class DestinacijaService {
         return this.destinacijeRepository.findAllDestinacije(limit,offset);
     }
 
-    public Destinacija updateDestinacija(Destinacija destinacija) {
+    public String updateDestinacija(Destinacija destinacija) {
         return this.destinacijeRepository.updateDestinacija(destinacija);
     }
 

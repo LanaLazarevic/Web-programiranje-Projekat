@@ -41,11 +41,11 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
     }
 
     @Override
-    public Destinacija updateDestinacija(Destinacija destinacija) {
+    public String updateDestinacija(Destinacija destinacija) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
+        String poruka;
         try {
-            //dal radi upit i dal cu imtati prosledjen id ili moram prvo da ga nadjem pa da vrsim update
 
             connection = this.newConnection();
 
@@ -55,15 +55,17 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
             preparedStatement.setInt(3, destinacija.getDestinacija_id());
             preparedStatement.executeUpdate();
 
+            poruka = "Uspesno azurirana destinacija.";
 
         } catch (SQLException e) {
             e.printStackTrace();
+            poruka = "Doslo je do greske destinacija nije azurirana.";
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
         }
 
-        return destinacija;
+        return poruka;
     }
 
     @Override
@@ -72,6 +74,7 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
         PreparedStatement preparedStatement = null;
         PreparedStatement preparedStatement2 = null;
         ResultSet resultSet = null;
+        String poruka;
         try {
 
             connection = this.newConnection();
@@ -81,8 +84,9 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
             preparedStatement2.setInt(1, id);
             resultSet = preparedStatement2.executeQuery();
             if (resultSet.next()) {
+                poruka = "Ne moze da se izbrise ova destinacija posto postoje clanci o ovoj destinaciji";
                 connection.rollback();
-                return "Ne moze da se izbrise ova destinacija posto postoje clanci o ovoj destinaciji";
+                return poruka;
             }
 
             preparedStatement = connection.prepareStatement("DELETE FROM destinacija WHERE destinacija_id = ?");
@@ -90,6 +94,8 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
             preparedStatement.executeUpdate();
 
             connection.commit();
+
+            poruka = "Uspesno obrisano";
 
         } catch (SQLException e) {
             if (connection != null) {
@@ -100,14 +106,15 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
                 }
             }
             e.printStackTrace();
-            return "Došlo je do greške prilikom brisanja";
+            poruka = "Došlo je do greške prilikom brisanja";
         } finally {
-            this.closeStatement(preparedStatement);
+            if(preparedStatement != null)
+                this.closeStatement(preparedStatement);
             this.closeStatement(preparedStatement2);
             this.closeResultSet(resultSet);
             this.closeConnection(connection);
         }
-        return "Uspesno obrisano";
+        return poruka;
     }
 
     @Override

@@ -16,12 +16,12 @@ public class ClanakService {
         return this.clanakRepository.findAllClanak(filter, limit, offset);
     }
 
-    public Clanak updateClanak(Clanak clanak){
+    public String updateClanak(Clanak clanak){
         return this.clanakRepository.updateClanak(clanak);
     }
 
-    public void deleteClanak(Integer id){
-         this.clanakRepository.deleteClanak(id);
+    public String deleteClanak(Integer id){
+         return this.clanakRepository.deleteClanak(id);
     }
 
     public void incrementbrposetioca(Integer id){

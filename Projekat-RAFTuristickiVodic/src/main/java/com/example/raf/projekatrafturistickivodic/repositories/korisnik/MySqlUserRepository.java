@@ -141,14 +141,10 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
     }
 
     @Override
-    public Korisnik updateKorisnik(Korisnik korisnik) {
+    public String updateKorisnik(Korisnik korisnik) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        System.out.println("id: " + korisnik.getKorisnik_id());
-        System.out.println("ime: " + korisnik.getIme());
-        System.out.println("prezime: " + korisnik.getPrezime());
-        System.out.println("tip: " + korisnik.getTip());
-        System.out.println("email: " + korisnik.getEmail());
+        String poruka;
         try {
 
             connection = this.newConnection();
@@ -160,15 +156,17 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
             preparedStatement.setInt(5, korisnik.getKorisnik_id());
             preparedStatement.executeUpdate();
 
+            poruka = "Uspesno azuriran korisnik.";
 
         } catch (SQLException e) {
             e.printStackTrace();
+            poruka = "Doslo do greske korisnik nije azuriran.";
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);
         }
 
-        return korisnik;
+        return poruka;
     }
 
     @Override

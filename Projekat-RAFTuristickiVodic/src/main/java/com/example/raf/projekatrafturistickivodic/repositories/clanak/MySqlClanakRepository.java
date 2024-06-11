@@ -74,12 +74,12 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
     }
 
     @Override
-    public Clanak updateClanak(Clanak clanak) {
+    public String updateClanak(Clanak clanak) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         PreparedStatement umetni = null;
         PreparedStatement deletemedju = null;
-
+        String poruka;
         try {
             connection = this.newConnection();
             connection.setAutoCommit(false);
@@ -108,6 +108,7 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             umetni.executeBatch();
 
             connection.commit();
+            poruka = "Clanak uspesno azuriran.";
 
         } catch (SQLException e) {
             if (connection != null) {
@@ -118,6 +119,7 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
                 }
             }
             e.printStackTrace();
+            poruka = "Doslo je do greske, clanak nije azuriran.";
         } finally {
             this.closeStatement(deletemedju);
             this.closeStatement(preparedStatement);
@@ -125,15 +127,16 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             this.closeConnection(connection);
         }
 
-        return clanak;
+        return poruka;
 
     }
 
     @Override
-    public void deleteClanak(Integer id) {
+    public String deleteClanak(Integer id) {
         Connection connection = null;
         //PreparedStatement deleteCommentsStatement = null;
         PreparedStatement deleteClanakStatement = null;
+        String poruka;
         try {
 
             connection = this.newConnection();
@@ -148,15 +151,18 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
             deleteClanakStatement = connection.prepareStatement(deleteClanakSql);
             deleteClanakStatement.setInt(1, id);
             deleteClanakStatement.executeUpdate();
-
+            poruka = "Uspesno brisanje";
 
         } catch (SQLException e) {
             e.printStackTrace();
+            poruka = "Doslo je do greske prilikom brisanja clanka.";
         } finally {
             //this.closeStatement(deleteCommentsStatement);
             this.closeStatement(deleteClanakStatement);
             this.closeConnection(connection);
         }
+
+        return poruka;
     }
 
     @Override
@@ -221,7 +227,7 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         } catch (SQLException e) {
             if (connection != null) {
                 try {
-                    connection.rollback(); // Vraćanje transakcije u slučaju greške
+                    connection.rollback();
                 } catch (SQLException rollbackEx) {
                     rollbackEx.printStackTrace();
                 }

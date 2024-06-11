@@ -24,8 +24,11 @@ public class UserService {
 
         Korisnik korisnik = userRepository.findKorisnik(email);
 
-        if (korisnik == null || !korisnik.getLozinka().equals(hashedPassword)) {
+        if (korisnik == null) {
             return "Taj korisnik ne postoji!";
+        }
+        if(!korisnik.getLozinka().equals(hashedPassword)){
+            return "Pogresna sifra!";
         }
         if(korisnik.getStatus().equalsIgnoreCase("neaktivan"))
             return "Korisnik nije aktivan";
@@ -59,7 +62,7 @@ public class UserService {
         this.userRepository.changeStatus(id);
     }
 
-    public Korisnik updateKorisnik(Korisnik korisnik){
+    public String updateKorisnik(Korisnik korisnik){
         return this.userRepository.updateKorisnik(korisnik);
     }
 

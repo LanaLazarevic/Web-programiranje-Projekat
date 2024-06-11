@@ -32,18 +32,22 @@ public class ClanakResource {
 
     @PUT
     @Produces({MediaType.APPLICATION_JSON})
-    public Clanak updateClanak(@Valid Clanak clanak){
-        return this.clanakService.updateClanak(clanak);
+    public Response updateClanak(@Valid Clanak clanak){
+        Map<String, Object> response = new HashMap<>();
+        response.put("poruka",this.clanakService.updateClanak(clanak));
+        return Response.ok(response).build();
     }
     @DELETE
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public void deleteClanak(@PathParam("id") Integer id){
-        this.clanakService.deleteClanak(id);
+    public Response deleteClanak(@PathParam("id") Integer id){
+        Map<String, Object> response = new HashMap<>();
+        response.put("poruka",this.clanakService.deleteClanak(id));
+        return Response.ok(response).build();
     }
 
     @POST
-    @Path("/{id}")
+    @Path("/brposeta/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public void incrementbrposetioca(@PathParam("id") Integer id){
         this.clanakService.incrementbrposetioca(id);
@@ -51,8 +55,13 @@ public class ClanakResource {
 
     @POST
     @Produces({MediaType.APPLICATION_JSON})
-    public Clanak addClanak(@Valid Clanak clanak){
-        return this.clanakService.addClanak(clanak);
+    public Response addClanak(@Valid Clanak clanak){
+        Map<String, Object> response = new HashMap<>();
+        if(this.clanakService.addClanak(clanak).getClanak_id() != null)
+            response.put("poruka","Uspesno dodat clanak");
+        else
+            response.put("poruka","Doslo je do greske clanak nije dodat.");
+        return Response.ok(response).build();
     }
 
     @GET

@@ -29,8 +29,8 @@ public class UserResource {
 
         String jwt = this.userService.login(loginRequest.getEmail(), loginRequest.getPassword());
         if (jwt.startsWith("Taj") || jwt.startsWith("Korisnik")) {
-            response.put("message", jwt);
-            return Response.status(422, "Unprocessable Entity").entity(response).build();
+            response.put("jwt", jwt);
+            return Response.ok(response).build();
         }
         response.put("jwt", jwt);
         return Response.ok(response).build();
@@ -38,9 +38,14 @@ public class UserResource {
 
     @POST
     @Produces({MediaType.APPLICATION_JSON})
-    public Korisnik addKorisnik(@Valid Korisnik korisnik)
+    public Response addKorisnik(@Valid Korisnik korisnik)
     {
-        return this.userService.addKorisnik(korisnik);
+        Map<String, Object> response = new HashMap<>();
+        if(this.userService.addKorisnik(korisnik).getKorisnik_id() != null)
+            response.put("poruka","Uspesno dodat korisnik");
+        else
+            response.put("poruka","Korisnik mora da ima jedinstveni email.");
+        return Response.ok(response).build();
     }
 
     @GET
@@ -64,9 +69,11 @@ public class UserResource {
     //dal put ili post
     @PUT
     @Produces({MediaType.APPLICATION_JSON})
-    public Korisnik updateKorisnik(@Valid Korisnik korisnik)
+    public Response updateKorisnik(@Valid Korisnik korisnik)
     {
-        return this.userService.updateKorisnik(korisnik);
+        Map<String, Object> response = new HashMap<>();
+        response.put("poruka", this.userService.updateKorisnik(korisnik) );
+        return Response.ok(response).build();
     }
 
 }

@@ -20,6 +20,7 @@ public class AktinvostResource {
     AktivnostService aktivnostService;
 
     @GET
+    @Path("/sve")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getAktivnost(@QueryParam("ids") String ids)
     {

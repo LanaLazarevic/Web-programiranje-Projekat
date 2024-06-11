@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DestinacijeRepository {
     List<Destinacija> findAllDestinacije(int limit, int offset);
-    Destinacija updateDestinacija(Destinacija destinacija);
+    String updateDestinacija(Destinacija destinacija);
     String deleteDestinacija(Integer id);
     Destinacija addDestinacija(Destinacija destinacija);
     String findDestinacijaById(Integer id);

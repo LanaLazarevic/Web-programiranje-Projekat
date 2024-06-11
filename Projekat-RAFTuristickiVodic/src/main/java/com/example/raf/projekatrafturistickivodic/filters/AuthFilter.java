@@ -47,7 +47,8 @@ public class AuthFilter implements ContainerRequestFilter {
         if (req.getUriInfo().getPath().contains("login") || req.getUriInfo().getPath().contains("naj")
                 || req.getUriInfo().getPath().contains("najc") || req.getUriInfo().getPath().contains("najt")
                 || req.getUriInfo().getPath().contains("sve") || req.getUriInfo().getPath().contains("ids")
-                || req.getUriInfo().getPath().contains("byid") || req.getUriInfo().getPath().contains("ime")) {
+                || req.getUriInfo().getPath().contains("byid") || req.getUriInfo().getPath().contains("ime")
+                || req.getUriInfo().getPath().contains("aktivnost") || req.getUriInfo().getPath().contains("brposeta")) {
             return false;
         }
 

@@ -4,7 +4,6 @@
         :clanci="clanci"
         :destinacije="destinacije"
         @delete="deleteclanak"
-        @update="updateclanak"
         :show="true"
     />
     <div class="pagination">
@@ -21,23 +20,14 @@ import ClanciTabela from "@/components/ClanciTabela.vue";
 export default {
   name:'ClanciByDestinacija',
   components: {ClanciTabela},
-  props: {
-    id: {
-      type: Number,
-      required: true
-    },
-    ime:{
-      type:String,
-      required: true
-    }
-  },
   data() {
     return {
       clanci: [],
-      destinacije:[],
+      destinacije: [],
       currentPage:1,
       limit: 5,
       totalPages:0,
+      id:this.$route.params.id
     };
   },
   methods: {
@@ -53,18 +43,7 @@ export default {
         console.log('API Response:', response.data);
         this.clanci = response.data.clancii;
         this.totalPages = response.data.stranice;
-        const listaid = [...new Set(this.clanci.map(clanak => clanak.destinacija))];
-        const idsString = listaid.join(',');
-
-        const response2 = await this.$axios.get(`/api/dest/ids`, {
-          params: {
-            limit: 501,
-            page: 1,
-            ids: idsString,
-          }
-        });
-        console.log('API Response:', response2.data);
-        this.destinacije = response2.data.destinacije;
+        this.destinacije.push(new Object(this.id, this.ime));
       } catch (error) {
         console.error('Došlo je do greške pri učitavanju destinacija:', error);
       }
@@ -84,13 +63,11 @@ export default {
       try {
         // eslint-disable-next-line no-unused-vars
         const response = await this.$axios.delete(`api/clanak/${destinacijaId}`);
+        alert(response.data.poruka);
         this.loadClanci(this.currentPage);
       } catch (error) {
         console.error('Došlo je do greške pri brisanju destinacije:', error);
       }
-    },
-    updateclanak() {
-
     }
   },
   created() {

@@ -68,16 +68,23 @@ public class DestinacijaResource {
 
     @POST
     @Produces({MediaType.APPLICATION_JSON})
-    public Destinacija addDestinacija(@Valid Destinacija destinacija)
+    public Response addDestinacija(@Valid Destinacija destinacija)
     {
-        return this.destinacijaService.addDestinacija(destinacija);
+        Map<String, Object> response = new HashMap<>();
+        if(this.destinacijaService.addDestinacija(destinacija).getDestinacija_id() != null)
+            response.put("poruka","Uspesno dodata destinacija");
+        else
+            response.put("poruka","Destinacija sa tim imenom vec postoji.");
+        return Response.ok(response).build();
     }
 
     @PUT
     @Produces({MediaType.APPLICATION_JSON})
-    public Destinacija updateDestinacija(@Valid Destinacija destinacija)
+    public Response updateDestinacija(@Valid Destinacija destinacija)
     {
-        return this.destinacijaService.updateDestinacija(destinacija);
+        Map<String, Object> response = new HashMap<>();
+        response.put("poruka",this.destinacijaService.updateDestinacija(destinacija));
+        return Response.ok(response).build();
     }
 
     @DELETE
