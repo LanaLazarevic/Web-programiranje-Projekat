@@ -31,11 +31,16 @@ export default {
         email: this.email,
         password: this.password,
       }).then(response => {
-        localStorage.setItem('jwt', response.data.jwt)
-        this.$router.push({name: 'AllDestinacije'});
+        if(response.data.jwt.startsWith("Taj") || response.data.jwt.startsWith("Koris") ||  response.data.jwt.startsWith("Pogres")){
+          alert(response.data.jwt);
+        } else{
+          localStorage.setItem('jwt', response.data.jwt)
+          this.$router.push({name: 'AllDestinacije'});
 
 
-        EventBus.$emit('login-success', localStorage.getItem("ime"));
+          EventBus.$emit('login-success', localStorage.getItem("ime"));
+        }
+
       })
     }
   },

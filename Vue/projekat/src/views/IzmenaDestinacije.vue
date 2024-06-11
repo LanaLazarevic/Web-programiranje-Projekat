@@ -24,28 +24,31 @@ export default {
     return {
       ime: this.imee,
       opis: this.opiss,
-      message:'',
     };
   },
   methods: {
     async submitForm() {
       try {
+        if(this.provera(this.ime) ||  this.provera(this.opis)){
+          alert("Sva polja moraju biti popunjena.");
+          return;
+        }
         const response = await this.$axios.put('/api/dest', {
           ime: this.ime,
           opis: this.opis,
           destinacija_id: this.id
         });
-        if(response.data)
-          this.message = 'Destinacija uspešno izmenjena!';
-        else
-          this.message = 'Destinacija nije izmenjena.'
 
-        alert(this.message);
+
+        alert(response.data.poruka);
 
       } catch (error) {
         console.error('Error adding destination:', error);
-        alert(error);
+        alert("Greska prilikom izmene");
       }
+    },
+    provera(string){
+      return string === ' ' || string ==='';
     }
   }
 };

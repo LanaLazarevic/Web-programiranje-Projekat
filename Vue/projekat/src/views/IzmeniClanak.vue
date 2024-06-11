@@ -77,7 +77,7 @@ export default {
     },
     async getaktivnosti(aktivnsotiid) {
       try {
-        const response = await this.$axios.get(`/api/akt`, {
+        const response = await this.$axios.get(`/api/akt/sve`, {
           params: {
             ids: aktivnsotiid.join(',')
           }
@@ -90,7 +90,11 @@ export default {
       }
     },
     async dodajaktivnost() {
-      if (!this.novaaktinvost) return;
+      if (!this.novaaktinvost){
+        return;
+      } else if (this.novaaktinvost === ' ' || this.novaaktinvost === '') {
+        alert("Polje za aktivnost ne sme da bude prazno");
+      }
       try {
         const response = await this.$axios.post('/api/akt', {
           naziv: this.novaaktinvost
@@ -111,10 +115,11 @@ export default {
     async submitForm() {
       try {
         const aktivnostiIds = this.aktivnosti.map(aktivnost => aktivnost.aktivnost_id);
-        console.log(this.aktivnosti);
-        console.log(aktivnostiIds);
+        if(this.provera(this.naslov) ||  this.provera(this.tekst) ||  this.provera(this.destinacija)){
+            alert("Sva polja moraju biti popunjena.");
+            return;
+        }
 
-        // eslint-disable-next-line no-unused-vars
         const response = await this.$axios.put('/api/clanak/', {
           clanak_id:this.id,
           naslov: this.naslov,
@@ -122,9 +127,15 @@ export default {
           destinacija: this.destinacija,
           aktivnosti: aktivnostiIds,
         });
+        alert(response.data.poruka);
+
       } catch (error) {
         console.error('Error adding destination:', error);
+        alert("Greska prilikom izmene");
       }
+    },
+    provera(string){
+      return string === ' ' || string ==='';
     }
   }
 };

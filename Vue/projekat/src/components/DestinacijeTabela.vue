@@ -12,7 +12,8 @@
     <tbody>
     <tr v-for="destinacija in destinacije" :key="destinacija.destinacija_id">
       <td>
-        <router-link :to="putanja ? { name: 'ClanciByDestinacija', params: { id: destinacija.destinacija_id, ime: destinacija.ime } } : { name: 'ClanciByDestinacijaBezJWT', params: { id: destinacija.destinacija_id, ime: destinacija.ime } }">          {{ destinacija.ime }}
+        <router-link :to="putanja ? `sviclancipodestinaciji/${destinacija.destinacija_id}` : `clancipodestinaciji/${destinacija.destinacija_id}`">
+          {{ destinacija.ime }}
         </router-link>
       </td>
       <td>{{ destinacija.opis }}</td>

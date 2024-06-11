@@ -1,41 +1,38 @@
 <template>
   <div>
-    <DestinacijeTabela
+    <ClanciTabela
+        :clanci="clanci"
         :destinacije="destinacije"
-        @delete="deleteDestinacija"
-        :show="true"
-        :putanja="true"/>
+        :show="false"
+    />
     <div class="pagination">
       <button @click="previousPage" :disabled="currentPage === 1">Nazad</button>
       <span>Stranica {{ currentPage }} od {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Napred</button>
     </div>
-    <div class="justify-content-center mt-2">
-      <router-link :to="{name: 'NovaDestinacija'}" class="btn btn-primary">Dodaj novu destinaciju</router-link>
-    </div>
   </div>
 </template>
 
 <script>
-import DestinacijeTabela from "@/components/DestinacijeTabela.vue";
+import ClanciTabela from "@/components/ClanciTabela.vue";
+
 export default {
-  name: "AllDestinacije",
-  components: {DestinacijeTabela},
+  name:'ClanciByAktivnostBezJWT',
+  components: {ClanciTabela},
   data() {
     return {
-      destinacije: [],
+      clanci: [],
+      destinacije:[],
       currentPage:1,
       limit: 5,
-      totalPages: 0,
-    }
-  },
-  created() {
-    this.loadDestinacije(1);
+      totalPages:0,
+      id: this.$route.params.id
+    };
   },
   methods: {
-    async loadDestinacije(page) {
+    async loadClanci(page) {
       try {
-        const response = await this.$axios.get(`/api/dest/sve`, {
+        const response = await this.$axios.get(`/api/clanak/aktivnost/` + this.id, {
           params: {
             limit: this.limit,
             page: page
@@ -43,38 +40,44 @@ export default {
         });
         console.log('API Response:', response);
         console.log('API Response:', response.data);
-        this.destinacije = response.data.destinacijee;
+        this.clanci = response.data.clancii;
         this.totalPages = response.data.stranice;
+        const listaid = [...new Set(this.clanci.map(clanak => clanak.destinacija))];
+        const idsString = listaid.join(',');
+
+        const response2 = await this.$axios.get(`/api/dest/ids`, {
+          params: {
+            limit: 501,
+            page: 1,
+            ids: idsString,
+          }
+        });
+        console.log('API Response:', response2.data);
+        this.destinacije = response2.data.destinacije;
       } catch (error) {
         console.error('Došlo je do greške pri učitavanju destinacija:', error);
-      }
-    },
-    async deleteDestinacija(destinacijaId) {
-      try {
-        const response = await this.$axios.delete(`api/dest/${destinacijaId}`);
-        alert(response.data.poruka);
-        this.loadDestinacije(this.currentPage);
-      } catch (error) {
-        console.error('Došlo je do greške pri brisanju destinacije:', error);
       }
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
-        this.loadDestinacije(this.currentPage);
+        this.loadClanci(this.currentPage);
       }
     },
     previousPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
-        this.loadDestinacije(this.currentPage);
+        this.loadClanci(this.currentPage);
       }
     }
+  },
+  created() {
+    this.loadClanci(1);
+    console.log("usao");
+  },
 
-  }
-}
+};
 </script>
-
 <style>
 .pagination {
   display: flex;

@@ -78,9 +78,6 @@ export default {
         console.error('Došlo je do greške pri brisanju destinacije:', error);
       }
     },
-    updatekorisnik() {
-
-    },
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;

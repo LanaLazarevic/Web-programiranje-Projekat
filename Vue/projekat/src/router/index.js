@@ -74,12 +74,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/NoviClanak.vue')
   },
   {
-    path: '/sviclancipodestinaciji',
+    path: '/sviclancipodestinaciji/:id',
     name: 'ClanciByDestinacija',
     meta: {
       authRequired: true,
     },
-    props: true,
     component: ()=>import('../views/AllClanciByDestinacija.vue')
   },
   {
@@ -110,16 +109,26 @@ const routes = [
     component: ()=>import('../views/IzmenaKorisnika.vue')
   },
   {
-    path: '/clanak',
+    path: '/clanak/:id',
     name: 'AClanak',
-    props: true,
     component: ()=>import('../views/AClanak.vue')
   },
   {
-    path: "/clancipodestinaciji",
+    path: "/clancipodestinaciji/:id",
     name: 'ClanciByDestinacijaBezJWT',
-    props: true,
     component: () => import(/* webpackChunkName: "about" */ '../views/AllClanciByDestinacijaBezJWT.vue')
+  },
+  {
+    path: "/clancipoaktivnosti/:id",
+    name: 'ClanciByAktivnostBezJWT',
+    component: () => import(/* webpackChunkName: "about" */ '../views/AllClanciByAktivnostBezJWT.vue')
+
+  },
+  {
+    path: "/sviclancipoaktivnosti/:id",
+    name: 'ClanciByAktivnost',
+    component: () => import(/* webpackChunkName: "about" */ '../views/AllClanciByAktivnost.vue')
+
   }
 ]
 

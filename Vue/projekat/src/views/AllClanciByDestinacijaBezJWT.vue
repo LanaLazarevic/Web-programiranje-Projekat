@@ -19,16 +19,6 @@ import ClanciTabela from "@/components/ClanciTabela.vue";
 export default {
   name:'ClanciByDestinacijaBezJWT',
   components: {ClanciTabela},
-  props: {
-    id: {
-      type: Number,
-      required: true
-    },
-    ime:{
-      type:String,
-      required: true
-    }
-  },
   data() {
     return {
       clanci: [],
@@ -36,6 +26,7 @@ export default {
       destinacije:[],
       limit: 5,
       totalPages:0,
+      id:this.$route.params.id
     };
   },
   methods: {

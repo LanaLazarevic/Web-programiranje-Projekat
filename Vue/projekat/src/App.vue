@@ -22,6 +22,7 @@ export default {
   created() {
     this.ime = localStorage.getItem('ime') || 'Guest';
     this.uloga = localStorage.getItem('uloga') || '';
+    this.jwt = !this.ime.startsWith("Guest");
     EventBus.$on('login-success', (ime) => {
       console.log('Login successful, ime:', ime);
       this.ime = ime;

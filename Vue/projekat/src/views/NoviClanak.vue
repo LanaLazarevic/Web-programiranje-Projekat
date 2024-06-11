@@ -88,27 +88,33 @@ export default {
     async submitForm() {
       try {
         const aktivnostiIds = this.aktivnosti.map(aktivnost => aktivnost.aktivnost_id);
-        console.log(this.aktivnosti);
-        console.log(aktivnostiIds);
+        if(this.provera(this.naslov) || this.provera(this.tekst) ||  this.provera(this.destinacija)){
+          alert("Sva polja moraju biti popunjena.");
+          return;
+        }
 
-        // eslint-disable-next-line no-unused-vars
-          const response = await this.$axios.post('/api/clanak', {
+        const response = await this.$axios.post('/api/clanak', {
             naslov: this.naslov,
             tekst: this.tekst,
             destinacija: this.destinacija,
             aktivnosti: aktivnostiIds,
             autor: localStorage.getItem("ime") + ' ' + localStorage.getItem("prezime"),
             vreme: new Date().toISOString().slice(0, 10)
-          });
+        });
 
-          this.naslov = '';
-          this.tekst = '';
-          this.destinacija = '';
-          this.tip = '';
+        this.naslov = '';
+        this.tekst = '';
+        this.destinacija = '';
+        this.tip = '';
+        alert(response.data.poruka);
 
       } catch (error) {
         console.error('Error adding destination:', error);
+        alert("Greska prilikom dodavanja");
       }
+    },
+    provera(string){
+      return string === ' ' || string ==='';
     }
   }
 };

@@ -7,8 +7,11 @@
       <p class="text-muted">Destinacija: {{ destinacijaa }}</p>
       <p><strong>Aktivnosti:</strong></p>
       <ul>
-        <li v-for="aktivnost in aktivnostii" :key="aktivnost.aktivnost_id">{{ aktivnost.naziv }}</li>
-      </ul>
+        <li v-for="aktivnost in aktivnostii" :key="aktivnost.aktivnost_id">
+          <router-link  v-if="aktivnost" :to=" jwt ? `/sviclancipoaktivnosti/${aktivnost.aktivnost_id}` : `/clancipoaktivnosti/${aktivnost.aktivnost_id}`">
+            {{ aktivnost.naziv }}
+          </router-link>
+        </li>      </ul>
 
       <p>{{ clanak.tekst }}</p>
 
@@ -41,12 +44,6 @@
 <script>
   export default {
     name:'AClanak',
-    props: {
-      id: {
-        type: Number,
-        required: true
-      }
-    },
     data() {
       return {
         clanak: {},
@@ -55,10 +52,15 @@
         destinacijaa:'',
         autorr: '',
         komm: '',
+        jwt : false,
+        id:this.$route.params.id
       };
     },
     created() {
       this.loadclanak();
+      if(localStorage.getItem('jwt'))
+        this.jwt=true;
+      this.$axios.post(`/api/clanak/brposeta/`+this.id)
     },
     methods: {
       async loadclanak() {
@@ -71,7 +73,7 @@
 
           const listaid = this.clanak.aktivnosti;
           const idsString = listaid.join(',');
-          const response3 = await this.$axios.get(`/api/akt/`, {
+          const response3 = await this.$axios.get(`/api/akt/sve`, {
             params: {
               ids: idsString,
             }
@@ -81,7 +83,7 @@
           const response4 = await this.$axios.get(`/api/dest/ime/`+this.clanak.destinacija);
           this.destinacijaa = response4.data.ime;
 
-          this.$axios.post(`/api/clanak/`+this.id);
+
 
         } catch (error) {
           console.error('Error fetching article:', error);

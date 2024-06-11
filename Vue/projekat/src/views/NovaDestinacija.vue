@@ -25,23 +25,24 @@ export default {
   methods: {
     async submitForm() {
       try {
+        if(this.provera(this.ime) || this.provera(this.opis)){
+          alert("Sva polja moraju biti popunjena.");
+          return;
+        }
         const response = await this.$axios.post('/api/dest', {
           ime: this.ime,
           opis: this.opis,
 
         });
-        if(response.data)
-          this.message = 'Destinacija uspešno dodata!';
-        else
-          this.message = 'Destinacija nije dodata.'
-
-        this.ime = '';
-        this.opis = '';
+        alert(response.data.poruka);
 
       } catch (error) {
         console.error('Error adding destination:', error);
-        this.message = 'Destinacija nije dodata.';
+        alert(error);
       }
+    },
+    provera(string){
+      return string === ' ' || string ==='';
     }
   }
 };

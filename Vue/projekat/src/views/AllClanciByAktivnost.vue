@@ -5,29 +5,20 @@
         :destinacije="destinacije"
         @delete="deleteclanak"
         :show="true"
-        :putanja="true"
     />
     <div class="pagination">
       <button @click="previousPage" :disabled="currentPage === 1">Nazad</button>
       <span>Stranica {{ currentPage }} od {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Napred</button>
     </div>
-
-
-    <div class="justify-content-center mt-2">
-      <router-link :to="{name: 'NoviClanak'}" class="btn btn-primary">Dodaj novi clanak</router-link>
-    </div>
-
   </div>
 </template>
 
-
 <script>
-
 import ClanciTabela from "@/components/ClanciTabela.vue";
 
 export default {
-  name: "AllClanak",
+  name:'ClanciByAktivnost',
   components: {ClanciTabela},
   data() {
     return {
@@ -36,24 +27,22 @@ export default {
       currentPage:1,
       limit: 5,
       totalPages:0,
-    }
-  },
-  created() {
-    this.loadClanci(1);
+      id: this.$route.params.id,
+    };
   },
   methods: {
     async loadClanci(page) {
       try {
-        const response = await this.$axios.get(`/api/clanak/sve/p`, {
+        const response = await this.$axios.get(`/api/clanak/aktivnost/` + this.id, {
           params: {
             limit: this.limit,
             page: page
           }
         });
+        console.log('API Response:', response);
         console.log('API Response:', response.data);
         this.clanci = response.data.clancii;
         this.totalPages = response.data.stranice;
-
         const listaid = [...new Set(this.clanci.map(clanak => clanak.destinacija))];
         const idsString = listaid.join(',');
 
@@ -81,9 +70,9 @@ export default {
         this.currentPage--;
         this.loadClanci(this.currentPage);
       }
-    },
-    async deleteclanak(clanakId) {
+    },async deleteclanak(clanakId) {
       try {
+        // eslint-disable-next-line no-unused-vars
         const response = await this.$axios.delete(`api/clanak/${clanakId}`);
         alert(response.data.poruka);
         this.loadClanci(this.currentPage);
@@ -91,10 +80,13 @@ export default {
         console.error('Došlo je do greške pri brisanju destinacije:', error);
       }
     }
-  }
-}
-</script>
+  },
+  created() {
+    this.loadClanci(1);
+  },
 
+};
+</script>
 <style>
 .pagination {
   display: flex;

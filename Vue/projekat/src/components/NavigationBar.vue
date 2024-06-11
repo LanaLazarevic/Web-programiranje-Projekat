@@ -58,6 +58,7 @@ export default {
       localStorage.removeItem('jwt');
       localStorage.removeItem('ime');
       localStorage.removeItem('uloga');
+      localStorage.removeItem('prezime');
       if(this.$route.path !== '/')
         this.$router.push({name: 'PocetnaStrana'});
       EventBus.$emit('login-success', 'Guest');

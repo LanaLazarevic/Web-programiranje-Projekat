@@ -44,14 +44,18 @@ export default {
   methods: {
     async submitForm() {
       try {
-        if(this.lozinka===this.lozinka2){
-          // eslint-disable-next-line no-unused-vars
+        if(this.lozinka===this.lozinka2) {
+          if(this.provera(this.ime) ||  this.provera(this.prezime) ||  this.provera(this.tip) ||  this.provera(this.email) ||  this.provera(this.lozinka)){
+            alert("Sva polja moraju biti popunjena.");
+            return;
+          }
+
           const response = await this.$axios.post('/api/users', {
             ime: this.ime,
             prezime: this.prezime,
             tip: this.tip,
             email: this.email,
-            lozinka:this.lozinka,
+            lozinka: this.lozinka,
             status: 'aktivan',
           });
 
@@ -61,6 +65,8 @@ export default {
           this.tip = '';
           this.email = '';
           this.lozinka = '';
+          alert(response.data.poruka);
+
         }
         else {
           alert("Lozinke moraju da se poklapaju.")
@@ -69,7 +75,11 @@ export default {
 
       } catch (error) {
         console.error('Error adding destination:', error);
+        alert("Greska prilikom izmene");
       }
+    },
+    provera(string){
+      return string === ' ' || string ==='';
     }
   }
 };

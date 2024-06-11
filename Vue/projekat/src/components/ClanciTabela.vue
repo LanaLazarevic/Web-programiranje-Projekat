@@ -15,7 +15,7 @@
     <tbody>
     <tr v-for="clanak in clanci" :key="clanak.clanak_id">
       <td>
-        <router-link :to="{ name: 'AClanak', params: { id: clanak.clanak_id }}">
+        <router-link :to="`/clanak/${clanak.clanak_id}`">
           {{ clanak.naslov }}
         </router-link>
       </td>

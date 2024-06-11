@@ -36,12 +36,15 @@ export default {
       prezime: this.prezimee,
       tip:this.tipp,
       email:this.emaill,
-      message:'',
     };
   },
   methods: {
     async submitForm() {
       try {
+        if(this.provera(this.ime) ||  this.provera(this.prezime) ||  this.provera(this.tip) ||  this.provera(this.email) ){
+          alert("Sva polja moraju biti popunjena.");
+          return;
+        }
         const response = await this.$axios.put('/api/users', {
           ime: this.ime,
           prezime: this.prezime,
@@ -49,17 +52,15 @@ export default {
           email: this.email,
           korisnik_id: this.id
         });
-        if(response.data)
-          this.message = 'Destinacija uspešno izmenjena!';
-        else
-          this.message = 'Destinacija nije izmenjena.'
-
-        alert(this.message);
+        alert(response.data.poruka);
 
       } catch (error) {
         console.error('Error adding destination:', error);
-        alert(error);
+        alert("Greska prilikom izmene");
       }
+    },
+    provera(string){
+      return string === ' ' || string ==='';
     }
   }
 };
