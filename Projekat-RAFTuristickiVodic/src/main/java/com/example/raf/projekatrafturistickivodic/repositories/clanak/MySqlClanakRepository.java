@@ -19,8 +19,7 @@ public class MySqlClanakRepository extends MySqlAbstractRepository implements Cl
         try {
             connection = this.newConnection();
             if(filter.equalsIgnoreCase("naj")){
-                statement = connection.prepareStatement("SELECT * FROM clanak ORDER BY vreme DESC limit 10 OFFSET ?");
-                statement.setInt(1, offset);
+                statement = connection.prepareStatement("SELECT * FROM clanak ORDER BY vreme DESC limit 10");
                 resultSet = statement.executeQuery();
 
             }
