@@ -5,7 +5,6 @@
         :destinacije="destinacije"
         @delete="deleteclanak"
         :show="true"
-        :putanja="true"
     />
     <div class="pagination">
       <button @click="previousPage" :disabled="currentPage === 1">Nazad</button>

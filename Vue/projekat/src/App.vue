@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <NavigationBar :ime="ime" :uloga="uloga" :jwt="jwt" />
+    <NavigationBar :ime="ime" :uloga="uloga" :jwt="jwt" :platforma="platforma" />
     <router-view />
   </div>
 </template>
@@ -17,17 +17,23 @@ export default {
       ime: '',
       uloga:'',
       jwt:false,
+      platforma: true
     };
   },
   created() {
     this.ime = localStorage.getItem('ime') || 'Guest';
     this.uloga = localStorage.getItem('uloga') || '';
     this.jwt = !this.ime.startsWith("Guest");
+    this.platforma = this.ime.startsWith("Guest");
     EventBus.$on('login-success', (ime) => {
-      console.log('Login successful, ime:', ime);
       this.ime = ime;
       this.uloga = localStorage.getItem('uloga') || '';
       this.jwt = !this.ime.startsWith("Guest");
+      this.platforma = this.ime.startsWith("Guest");
+    });
+    EventBus.$on('change', () => {
+      this.platforma = !this.platforma;
+      localStorage.setItem("promena", this.platforma);
     });
   }
 };

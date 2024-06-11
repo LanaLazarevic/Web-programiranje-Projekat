@@ -8,7 +8,7 @@
       <p><strong>Aktivnosti:</strong></p>
       <ul>
         <li v-for="aktivnost in aktivnostii" :key="aktivnost.aktivnost_id">
-          <router-link  v-if="aktivnost" :to=" jwt ? `/sviclancipoaktivnosti/${aktivnost.aktivnost_id}` : `/clancipoaktivnosti/${aktivnost.aktivnost_id}`">
+          <router-link  v-if="aktivnost" :to="`/clancipoaktivnosti/${aktivnost.aktivnost_id}`">
             {{ aktivnost.naziv }}
           </router-link>
         </li>      </ul>
@@ -42,6 +42,8 @@
 </template>
 
 <script>
+  import {EventBus} from "@/plugins/event-bus";
+
   export default {
     name:'AClanak',
     data() {
@@ -58,8 +60,10 @@
     },
     created() {
       this.loadclanak();
-      if(localStorage.getItem('jwt'))
-        this.jwt=true;
+      if(localStorage.getItem('jwt')!==null && localStorage.getItem('promena')==='false'){
+        EventBus.$emit('change');
+        console.log("promenio");
+      }
       this.$axios.post(`/api/clanak/brposeta/`+this.id)
     },
     methods: {
@@ -69,7 +73,12 @@
           this.clanak = response.data;
 
           const response2 = await this.$axios.get(`/api/kom/` + this.id);
-          this.kom = response2.data;
+          if (Array.isArray(response2.data)) {
+            this.kom = response2.data;
+          } else {
+            console.log(response2.data);
+            this.kom=[];
+          }
 
           const listaid = this.clanak.aktivnosti;
           const idsString = listaid.join(',');

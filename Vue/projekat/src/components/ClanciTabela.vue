@@ -33,6 +33,7 @@
 </template>
 
 <script>
+
 export default {
   props: {
     clanci: {
@@ -64,6 +65,7 @@ export default {
       const destinacija = this.findDestinaciju(destinacijaId);
       return destinacija ? destinacija.ime : '';
     }
+
   }
 }
 </script>
