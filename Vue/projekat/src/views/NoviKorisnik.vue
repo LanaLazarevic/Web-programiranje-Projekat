@@ -75,7 +75,7 @@ export default {
 
       } catch (error) {
         console.error('Error adding destination:', error);
-        alert("Greska prilikom izmene");
+        alert("Korisnik sa takvim emailom vec postoji.");
       }
     },
     provera(string){

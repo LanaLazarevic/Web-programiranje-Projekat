@@ -100,19 +100,27 @@
       },
       async submit() {
         try {
-          const response = await this.$axios.post('/api/kom/' + this.id, {
-            autor: this.autorr,
-            tekst: this.komm,
-            datum : new Date().toISOString().slice(0, 10),
-          });
+          if(!this.provera(this.autorr) && !this.provera(this.komm)){
+            const response = await this.$axios.post('/api/kom/' + this.id, {
+              autor: this.autorr,
+              tekst: this.komm,
+              datum : new Date().toISOString().slice(0, 10),
+            });
 
-          this.kom.push(response.data);
-          this.autorr = '';
-          this.komm = '';
+            this.kom.push(response.data);
+            this.autorr = '';
+            this.komm = '';
+          } else {
+            alert("Sva polja moraju biti popunjena.");
+          }
+
 
         } catch (error) {
           console.error('Error adding kom:', error);
         }
+      },
+      provera(string){
+        return string === ' ' || string ==='';
       }
     }
   };

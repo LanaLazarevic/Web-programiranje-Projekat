@@ -106,7 +106,7 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
                 }
             }
             e.printStackTrace();
-            poruka = "Došlo je do greške prilikom brisanja";
+            poruka = "Destinacija sa takvim imenom vec postoji.";
         } finally {
             if(preparedStatement != null)
                 this.closeStatement(preparedStatement);
@@ -134,6 +134,7 @@ public class MySqlDestinacijeRepository extends MySqlAbstractRepository implemen
                 destinacija.setDestinacija_id(resultSet.getInt(1));
             }
         } catch (SQLException e) {
+            destinacija.setDestinacija_id(null);
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);

@@ -44,7 +44,7 @@ export default {
 
       } catch (error) {
         console.error('Error adding destination:', error);
-        alert("Greska prilikom izmene");
+        alert("Destinacija sa takvim imenom vec postoji.");
       }
     },
     provera(string){

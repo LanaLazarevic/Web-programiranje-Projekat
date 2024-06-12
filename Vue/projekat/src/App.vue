@@ -25,11 +25,13 @@ export default {
     this.uloga = localStorage.getItem('uloga') || '';
     this.jwt = !this.ime.startsWith("Guest");
     this.platforma = this.ime.startsWith("Guest");
+    localStorage.setItem("promena", this.platforma);
     EventBus.$on('login-success', (ime) => {
       this.ime = ime;
       this.uloga = localStorage.getItem('uloga') || '';
       this.jwt = !this.ime.startsWith("Guest");
       this.platforma = this.ime.startsWith("Guest");
+      localStorage.setItem("promena", this.platforma);
     });
     EventBus.$on('change', () => {
       this.platforma = !this.platforma;

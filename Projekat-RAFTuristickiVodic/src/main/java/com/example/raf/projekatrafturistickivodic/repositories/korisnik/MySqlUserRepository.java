@@ -82,6 +82,7 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
             }
 
         } catch (SQLException e) {
+            korisnik.setKorisnik_id(null);
             e.printStackTrace();
         } finally {
             this.closeStatement(preparedStatement);
@@ -160,7 +161,7 @@ public class MySqlUserRepository extends MySqlAbstractRepository implements User
 
         } catch (SQLException e) {
             e.printStackTrace();
-            poruka = "Doslo do greske korisnik nije azuriran.";
+            poruka = "Korisnik sa takvim emailom vec postoji.";
         } finally {
             this.closeStatement(preparedStatement);
             this.closeConnection(connection);

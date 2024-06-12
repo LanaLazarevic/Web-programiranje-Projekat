@@ -31,7 +31,8 @@ public class Clanak {
     private Integer destinacija;
 
     private List<Komentar> komentari = new CopyOnWriteArrayList<>();
-
+    @NotNull(message = "Morate da unesete bar neku aktivnost")
+    @NotEmpty(message =  "Morate da unesete bar neku aktivnost")
     private List<Integer> aktivnosti = new CopyOnWriteArrayList<>();
 
     public Clanak() {
