@@ -24,6 +24,7 @@
 <script>
 
 import ClanciTabela from "@/components/ClanciTabela.vue";
+import {EventBus} from "@/plugins/event-bus";
 
 export default {
   name: "AllClanak",
@@ -38,6 +39,10 @@ export default {
     }
   },
   created() {
+    if(localStorage.getItem('jwt')!==null && localStorage.getItem('promena')==='true'){
+      EventBus.$emit('change');
+      console.log("promenio");
+    }
     this.loadClanci(1);
   },
   methods: {

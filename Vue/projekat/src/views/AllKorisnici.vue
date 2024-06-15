@@ -40,6 +40,8 @@
 
 <script>
 
+import {EventBus} from "@/plugins/event-bus";
+
 export default {
   name: "AllKorisnici",
   data() {
@@ -51,6 +53,10 @@ export default {
     }
   },
   created() {
+    if(localStorage.getItem('jwt')!==null && localStorage.getItem('promena')==='true'){
+      EventBus.$emit('change');
+      console.log("promenio");
+    }
     this.loadKorisnici(1);
   },
   methods: {
